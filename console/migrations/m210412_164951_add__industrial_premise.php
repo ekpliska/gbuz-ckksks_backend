@@ -20,14 +20,14 @@ class m210412_164951_add__industrial_premise extends Migration
 
         $this->createTable('{{%industrial_premise}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
             'eqp_function_id' => $this->integer(),
             'placement_type_id' => $this->integer(),
             'square' => $this->string(10),
             // TODO: подумать как хранить, массивом IDs или через промежуточную таблицу
-            'monitored_parameters' => $this->string(256),
+            'monitored_parameters' => $this->string(255),
             // TODO: подумать как хранить, массивом IDs или через промежуточную таблицу
-            'special_equipments' => $this->string(256),
+            'special_equipments' => $this->string(255),
             'document_type_id' => $this->integer(),
             'series' => $this->string(30),
             'number' => $this->string(30),

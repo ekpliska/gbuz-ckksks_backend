@@ -20,14 +20,14 @@ class m210412_133804_add__measuring_instrument extends Migration
 
         $this->createTable('{{%measuring_instrument}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
             'eqp_function_id' => $this->integer(),
             'type' => $this->string(100),
             'factory_number' => $this->string(70)->unique(),
             'commissioning_year' => $this->string(4),
             'inventory_number' => $this->string(70)->unique(),
-            'measuring_range' => $this->string(256),
-            'accuracy_class' => $this->string(256),
+            'measuring_range' => $this->string(255),
+            'accuracy_class' => $this->string(255255),
             'verification_certificate' => $this->string(100)->notNull(),
             'validity_date_from' => $this->dateTime()->notNull(),
             'validity_date_to' => $this->dateTime()->notNull(),

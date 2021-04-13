@@ -25,7 +25,7 @@ class m210409_104157_add__dictionaries extends Migration
         $this->createTable('{{%equipment_function}}', [
             'id' => $this->primaryKey(),
             'eqp_category_id' => $this->integer()->notNull(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
         ], $table_options);
 
         $this->addForeignKey(
@@ -50,7 +50,7 @@ class m210409_104157_add__dictionaries extends Migration
 
         $this->createTable('{{%type_own}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
         ], $table_options);
 
         $this->createTable('{{%test_group}}', [
@@ -76,8 +76,8 @@ class m210409_104157_add__dictionaries extends Migration
         $this->createTable('{{%organization}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(170)->notNull(),
-            'address' => $this->string(2556)->notNull(),
-            'address_legal' => $this->string(256),
+            'address' => $this->string(255)->notNull(),
+            'address_legal' => $this->string(255),
             'address_sampling' => $this->string(),
             'contact_name' => $this->string(),
             'leader_name' => $this->string(),

@@ -20,14 +20,14 @@ class m210412_144105_add__test_equipment extends Migration
 
         $this->createTable('{{%test_equipment}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
             'eqp_function_id' => $this->integer(),
             'test_group_id' => $this->integer(),
             'type' => $this->string(100),
             'factory_number' => $this->string(70)->unique(),
             'commissioning_year' => $this->string(4),
             'inventory_number' => $this->string(70)->unique(),
-            'specifications' => $this->string(256),
+            'specifications' => $this->string(255),
             'attestation_document' => $this->string(120)->notNull(),
             'validity_date_from' => $this->dateTime()->notNull(),
             'validity_date_to' => $this->dateTime()->notNull(),

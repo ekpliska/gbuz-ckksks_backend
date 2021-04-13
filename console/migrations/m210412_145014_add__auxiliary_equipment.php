@@ -20,7 +20,7 @@ class m210412_145014_add__auxiliary_equipment extends Migration
 
         $this->createTable('{{%auxiliary_equipment}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(256)->notNull(),
+            'name' => $this->string(255)->notNull(),
             'eqp_function_id' => $this->integer(),
             'type' => $this->string(100),
             'factory_number' => $this->string(70)->unique(),
