@@ -14,13 +14,14 @@ class AuthController extends RestController
         $model = new SignInForm();
         $model->load(Yii::$app->request->bodyParams, '');
 
-        if ($model->validate()) {
-            return $this->error(422, null, 'Ошибка валидации');
+        if (!$model->validate()) {
+            $errors = $model->getErrorSummary($model->errors);
+            return $this->error(422, 422, $errors);
         }
 
         $token = $model->auth();
         if (!$token) {
-            return $this->error(500, null, 'Ошибка входа');
+            return $this->error(500, 500, 'Ошибка авторизации');
         }
 
         return $this->success([

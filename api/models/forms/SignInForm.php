@@ -17,7 +17,15 @@ class SignInForm extends Model
     {
         return [
             [['username', 'password'], 'required', 'message' => 'Поле обязательно для заполнения'],
-            ['password', 'string', 'length' => [6, 8]],
+            [['username', 'password'], 'trim'],
+            [
+                ['password'],
+                'string',
+                'min' => 6,
+                'max' => 16,
+                'tooLong' => 'Пароль должен содержать не более 16 символов',
+                'tooShort' => 'Пароль должен содержать не менее 6 символов'
+            ],
             ['password', 'validatePassword'],
         ];
     }
@@ -34,8 +42,10 @@ class SignInForm extends Model
 
     public function auth()
     {
-        if ($this->validate()) {
-            $user = $this->_user;
+
+        $user = $this->getUser();
+
+        if ($this->validate() && $user) {
             $user->generateToken();
             return $user->save() ? $user->token : false;
         }
@@ -47,6 +57,14 @@ class SignInForm extends Model
     {
         $this->_user = User::findByUsername($this->username);
         return $this->_user;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Логин',
+            'password' => 'Пароль',
+        ];
     }
 
 }

@@ -16,6 +16,7 @@ class Module extends \yii\base\Module implements BootstrapInterface {
                 'class' => 'yii\rest\UrlRule',
                 'controller' => [
                     'v1/auth',
+                    'v1/user',
                 ],
                 'pluralize' => false,
                 'extraPatterns' => [

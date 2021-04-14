@@ -3,6 +3,7 @@
 namespace common\controllers;
 
 use yii\rest\Controller;
+use yii\web\BadRequestHttpException;
 use yii\web\UnauthorizedHttpException;
 use common\traits\JsonResponse;
 
