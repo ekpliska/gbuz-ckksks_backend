@@ -10,9 +10,11 @@ use yii\filters\AccessControl;
 class UserController extends RestAuthController
 {
 
-    public function behaviors($verbs_props = [
-        'index' => ['GET'],
-    ])
+    public function behaviors(
+        $verbs_props = [
+            'index' => ['GET'],
+        ]
+    )
     {
         return parent::behaviors($verbs_props);
     }

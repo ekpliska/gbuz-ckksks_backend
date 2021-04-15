@@ -2,23 +2,25 @@
 namespace common\models;
 
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * User model
+ * This is the model class for table "user".
  *
- * @property integer $id
+ * @property int $id
  * @property string $username
  * @property string $password_hash
  * @property string $token
- * @property string $auth_key
- * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
+ * @property string|null $auth_key
+ * @property int|null $status
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ *
+ * @property UserRole[] $UserRoles
  */
+
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_ACTIVE = 1;
@@ -50,11 +52,22 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'password_hash', 'token'], 'required'],
             [['username'], 'string', 'max' => 70],
-            [['password_hash'], 'string', 'max' => 255],
+            [['password_hash', 'token', 'auth_key'], 'string', 'max' => 255],
+            [['status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             [['created_at', 'updated_at'], 'safe'],
         ];
+    }
+
+    /**
+     * Gets query for [[UserRoles]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserRoles()
+    {
+        return $this->hasMany(UserRole::className(), ['user_id' => 'id']);
     }
 
     /**
@@ -131,6 +144,20 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function generateToken() {
         $this->token = Yii::$app->security->generateRandomString();
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Логин',
+            'password_hash' => 'Пароль',
+            'token' => 'Token',
+            'auth_key' => 'Auth Key',
+            'status' => 'Статус',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата обновления',
+        ];
     }
 
 }
