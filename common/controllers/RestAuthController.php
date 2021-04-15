@@ -7,6 +7,7 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\filters\VerbFilter;
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
+use yii\web\Response;
 use yii\web\UnauthorizedHttpException;
 use common\traits\JsonResponse;
 
