@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\base\BaseObject;
 use yii\db\ActiveRecord;
 
 /**
@@ -69,4 +70,5 @@ class UserRole extends ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+
 }

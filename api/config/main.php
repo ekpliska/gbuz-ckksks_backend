@@ -51,12 +51,21 @@ return [
 //        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => false,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'site',
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'v1/user',
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET view/<id:\d+>' => 'view',
+                        'DELETE delete/<id:\d+>' => 'delete',
+                    ]
                 ],
             ],
         ],

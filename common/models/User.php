@@ -2,8 +2,11 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Expression;
+use yii\db\BaseActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -23,8 +26,10 @@ use yii\web\IdentityInterface;
 
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 101;
+    const STATUS_INACTIVE = 100;
+
+    public $user_roles = [];
 
     /**
      * {@inheritdoc}
@@ -40,7 +45,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ]
         ];
     }
 
@@ -50,13 +62,23 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password_hash', 'token'], 'required'],
-            [['username'], 'string', 'max' => 70],
+            [['username'], 'required'],
+            [['username'], 'unique', 'message' => 'Указанный логин уже используется в системе'],
+            [
+                ['username'],
+                'string',
+                'max' => 70,
+                'tooLong' => 'Логин должен содержать не более 70 символов',
+            ],
             [['password_hash', 'token', 'auth_key'], 'string', 'max' => 255],
             [['status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
-            [['created_at', 'updated_at'], 'safe'],
+            [
+                'status',
+                'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE],
+                'message' => 'Статус содержит неверный формат',
+            ],
+            [['created_at', 'updated_at', 'user_roles'], 'safe'],
         ];
     }
 
@@ -146,6 +168,33 @@ class User extends ActiveRecord implements IdentityInterface
         $this->token = Yii::$app->security->generateRandomString();
     }
 
+    public function updateRoles($role_ids = [])
+    {
+        if (count($role_ids) === 0) {
+            return false;
+        }
+
+        $user_roles = $this->getUserRoles()->all();
+        if (count($user_roles)) {
+            foreach ($user_roles as $user_role) {
+                $user_role->delete();
+            }
+        }
+
+        $roles = Role::find()->where(['IN', 'id', $role_ids])->all();
+
+        if (count($roles)) {
+            foreach ($roles as $role) {
+                $role_model = new UserRole();
+                $role_model->user_id = $this->id;
+                $role_model->role_id = $role->id;
+                $role_model->save();
+            }
+        }
+
+        return true;
+    }
+
     public function attributeLabels()
     {
         return [
@@ -166,7 +215,9 @@ class User extends ActiveRecord implements IdentityInterface
             parent::fields(),
             [
                 'roles' => function() {
-                    return [];
+                    $role_ids = ArrayHelper::getColumn($this->getUserRoles()->all(), 'role_id');
+                    $role_names = Role::find()->where(['IN', 'id', $role_ids])->all();
+                    return ArrayHelper::getColumn($role_names, 'sys_name');
                 },
                 'employee' => function() {
                     return null;
@@ -174,9 +225,11 @@ class User extends ActiveRecord implements IdentityInterface
             ]
         );
 
-        unset($fields['password_hash']);
-        unset($fields['token']);
-        unset($fields['auth_key']);
+        unset(
+            $fields['password_hash'],
+            $fields['token'],
+            $fields['auth_key']
+        );
 
         return $fields;
     }

@@ -35,6 +35,7 @@ class m210413_180600_add__user extends Migration
         $this->createTable('role', [
             'id' => $this->primaryKey(),
             'name' => $this->string(100)->notNull(),
+            'sys_name' => $this->string(100)->notNull(),
             'description' => $this->string(100),
         ], $table_options);
 

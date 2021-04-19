@@ -22,8 +22,8 @@ class SignInForm extends Model
                 ['password'],
                 'string',
                 'min' => 6,
-                'max' => 16,
-                'tooLong' => 'Пароль должен содержать не более 16 символов',
+                'max' => 8,
+                'tooLong' => 'Пароль должен содержать не более 8 символов',
                 'tooShort' => 'Пароль должен содержать не менее 6 символов'
             ],
             ['password', 'validatePassword'],
