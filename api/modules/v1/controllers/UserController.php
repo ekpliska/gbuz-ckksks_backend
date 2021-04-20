@@ -6,7 +6,7 @@ namespace api\modules\v1\controllers;
 use Yii;
 use yii\helpers\ArrayHelper;
 use common\controllers\RestAuthController;
-use api\models\forms\UserSearchForm;
+use api\models\forms\MeasuringInstrumentForm;
 use api\models\forms\UserFrom;
 use api\models\User;
 
@@ -33,10 +33,10 @@ class UserController extends RestAuthController
 
         $query_data = Yii::$app->request->queryParams;
 
-        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : UserSearchForm::DEFAULT_PAGE_SIZE;
+        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : MeasuringInstrumentForm::DEFAULT_PAGE_SIZE;
         $page_number = $query_data && $query_data['page_number'] ? $query_data['page_number'] : 0;
 
-        $search_model = new UserSearchForm($query_data);
+        $search_model = new MeasuringInstrumentForm($query_data);
         $result = $search_model->search();
 
         return $this->success([

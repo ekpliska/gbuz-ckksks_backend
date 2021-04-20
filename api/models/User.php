@@ -2,11 +2,8 @@
 
 namespace api\models;
 
-use common\models\Role;
-use common\models\User as BaseUser;
-use common\models\UserRole;
-use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
+use common\models\User as BaseUser;
 
 class User extends BaseUser
 {

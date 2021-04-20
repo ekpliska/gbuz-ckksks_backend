@@ -9,7 +9,7 @@ use yii\data\ActiveDataProvider;
 class UserSearchForm extends BaseUser
 {
 
-    const DEFAULT_PAGE_SIZE = 2;
+    const DEFAULT_PAGE_SIZE = 14;
 
     public $user_name;
     public $user_status;
