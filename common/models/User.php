@@ -170,7 +170,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function updateRoles($role_ids = [])
     {
-        if (count($role_ids) === 0) {
+        if (count($role_ids) === null) {
             return false;
         }
 

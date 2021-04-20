@@ -6,6 +6,7 @@ use common\models\Role;
 use common\models\User as BaseUser;
 use common\models\UserRole;
 use yii\base\BaseObject;
+use yii\helpers\ArrayHelper;
 
 class User extends BaseUser
 {
@@ -15,26 +16,31 @@ class User extends BaseUser
         return parent::rules();
     }
 
-    public function update($runValidation = true, $attributeNames = null)
+    public function updateData($attribute_names = null)
     {
-        $user_roles = $attributeNames['user_roles'];
+        $user_roles = ArrayHelper::keyExists('user_roles', $attribute_names) ? $attribute_names['user_roles'] : null;
+
         unset(
-            $attributeNames['id'],
-            $attributeNames['password_hash'],
-            $attributeNames['token'],
-            $attributeNames['auth_key'],
-            $attributeNames['user_roles']
+            $attribute_names['id'],
+            $attribute_names['password_hash'],
+            $attribute_names['token'],
+            $attribute_names['auth_key'],
+            $attribute_names['user_roles']
         );
 
-        $this->setAttributes($attributeNames);
+        $this->setAttributes($attribute_names);
 
         if (!$this->validate()) {
             return false;
         }
 
+        if (ArrayHelper::keyExists('password', $attribute_names)) {
+            $this->setPassword($attribute_names['password']);
+        }
+
         $this->updateRoles($user_roles);
 
-        if (parent::update($runValidation, $attributeNames) !== false) {
+        if ($this->save()) {
             return true;
         } else {
             return false;

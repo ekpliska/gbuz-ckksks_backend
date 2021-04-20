@@ -4,11 +4,11 @@
 namespace api\modules\v1\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use common\controllers\RestAuthController;
 use api\models\forms\UserSearchForm;
 use api\models\forms\UserFrom;
 use api\models\User;
-use yii\db\StaleObjectException;
 
 class UserController extends RestAuthController
 {
@@ -20,7 +20,7 @@ class UserController extends RestAuthController
             'index' => ['GET'],
             'create' => ['POST'],
             'update' => ['PUT'],
-            'View' => ['GET'],
+            'view' => ['GET'],
             'delete' => ['DELETE'],
         ]
     )
@@ -67,7 +67,7 @@ class UserController extends RestAuthController
     {
         $post_data = Yii::$app->request->bodyParams;
 
-        if (!isset($post_data['id']) || $post_data['id'] === null) {
+        if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
             return $this->error(422, 422, ['Не передан уникальный идентификатор пользователя']);
         }
 
@@ -77,7 +77,7 @@ class UserController extends RestAuthController
             return $this->error(404, 404, ['Пользователь не найден']);
         }
 
-        if ($user->load($post_data, '') && $user->update(true, $post_data)) {
+        if ($user->load($post_data, '') && $user->updateData($post_data)) {
             return $this->success($user);
         }
 
