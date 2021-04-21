@@ -42,7 +42,7 @@ class MeasuringInstrument extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'measuring_instrument';
+        return '{{%measuring_instrument}}';
     }
 
     /**

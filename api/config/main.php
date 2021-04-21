@@ -73,7 +73,9 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'v1/measuring-instrument',
                     'pluralize' => false,
-                    'extraPatterns' => []
+                    'extraPatterns' => [
+                        'POST create' => 'create',
+                    ]
                 ],
             ],
         ],

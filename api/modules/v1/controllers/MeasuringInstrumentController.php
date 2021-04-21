@@ -5,8 +5,9 @@ namespace api\modules\v1\controllers;
 
 use Yii;
 use common\controllers\RestAuthController;
-use api\models\MeasuringInstrument;
+use api\models\measuringInstrument\MeasuringInstrument;
 use api\models\measuringInstrument\MeasuringInstrumentSearchForm;
+use yii\base\BaseObject;
 
 class MeasuringInstrumentController extends RestAuthController
 {
@@ -16,6 +17,7 @@ class MeasuringInstrumentController extends RestAuthController
     public function behaviors(
         $verbs_props = [
             'index' => ['GET'],
+            'create' => ['POST'],
         ]
     )
     {
@@ -37,6 +39,22 @@ class MeasuringInstrumentController extends RestAuthController
             'pageSize' => (int) $page_size,
             'pageNumber' => (int) $page_number,
             'totalCount' => (int) $result->getTotalCount(),
+        ]);
+    }
+
+    public function actionCreate()
+    {
+        $post_data = Yii::$app->request->bodyParams;
+        $model = new MeasuringInstrument();
+        $model->load($post_data, '');
+        $model->setAttributes($post_data);
+
+        if (!$model->save()) {
+            return $this->error(422, 422, $model->getErrorSummary($model->errors));
+        }
+
+        return $this->success([
+            'success' => true,
         ]);
     }
 

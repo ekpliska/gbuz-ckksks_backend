@@ -1,6 +1,6 @@
 <?php
 
-namespace api\models;
+namespace api\models\measuringInstrument;
 
 use Yii;
 use common\models\MeasuringInstrument as BaseMeasuringInstrument;

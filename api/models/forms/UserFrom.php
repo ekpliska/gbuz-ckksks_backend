@@ -3,15 +3,12 @@
 
 namespace api\models\forms;
 
-use common\models\Role;
-use common\models\UserRole;
 use Yii;
-use yii\base\BaseObject;
+use yii\db\BaseActiveRecord;
 use yii\base\Model;
 use yii\behaviors\TimestampBehavior;
 use common\models\User;
-use yii\db\ActiveRecord;
-use yii\db\Exception;
+use yii\db\Expression;
 
 class UserFrom extends Model
 {
@@ -29,10 +26,10 @@ class UserFrom extends Model
             [
                 'class' => TimestampBehavior::className(),
                 'attributes' => [
-                    \yii\db\BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
-                    \yii\db\BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
-                'value' => new \yii\db\Expression('NOW()'),
+                'value' => new Expression('NOW()'),
             ]
         ];
     }
