@@ -88,7 +88,7 @@ class UserController extends RestAuthController
     public function actionView($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор пользователя']);
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $id]);
@@ -104,7 +104,7 @@ class UserController extends RestAuthController
     public function actionDelete($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор пользователя']);
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $id]);

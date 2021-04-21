@@ -3,6 +3,7 @@
 
 namespace api\modules\v1\controllers;
 
+use api\models\User;
 use Yii;
 use common\controllers\RestAuthController;
 use api\models\measuringInstrument\MeasuringInstrument;
@@ -18,6 +19,8 @@ class MeasuringInstrumentController extends RestAuthController
         $verbs_props = [
             'index' => ['GET'],
             'create' => ['POST'],
+            'view' => ['GET'],
+            'delete' => ['DELETE'],
         ]
     )
     {
@@ -56,6 +59,41 @@ class MeasuringInstrumentController extends RestAuthController
         return $this->success([
             'success' => true,
         ]);
+    }
+
+    public function actionView($id)
+    {
+        if (!$id) {
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+        }
+
+        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $id]);
+
+        if (!$measuring_instrument) {
+            return $this->error(404, 404, ['Средство измерения не найдено']);
+        }
+
+        $this->success($measuring_instrument);
+
+    }
+
+    public function actionDelete($id)
+    {
+        if (!$id) {
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+        }
+
+        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $id]);
+
+        if (!$measuring_instrument) {
+            return $this->error(404, 404, ['Средство измерения не найдено']);
+        }
+
+        if ($measuring_instrument->delete()) {
+            $this->success();
+        }
+
+        return $this->error(500, 500, ['Ошибка удаления записи']);
     }
 
 }

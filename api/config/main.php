@@ -74,6 +74,8 @@ return [
                     'controller' => 'v1/measuring-instrument',
                     'pluralize' => false,
                     'extraPatterns' => [
+                        'DELETE delete/<id:\d+>' => 'delete',
+                        'GET view/<id:\d+>' => 'view',
                         'POST create' => 'create',
                     ]
                 ],

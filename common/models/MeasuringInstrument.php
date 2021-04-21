@@ -52,9 +52,16 @@ class MeasuringInstrument extends ActiveRecord
     {
         return [
             [
-                ['name', 'verification_certificate', 'validity_date_from', 'validity_date_to'],
+                [
+                    'name',
+                    'verification_certificate',
+                    'validity_date_from',
+                    'validity_date_to',
+                    'factory_number',
+                    'inventory_number',
+                ],
                 'required',
-                'message' => 'Поле {$attribute} обязательно для заполнения',
+                'message' => '{attribute} обязательно для заполнения',
             ],
             [['eqp_function_id', 'annually', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
             [['accuracy_class', 'note'], 'string'],
@@ -63,13 +70,13 @@ class MeasuringInstrument extends ActiveRecord
                 ['name', 'measuring_range'],
                 'string',
                 'max' => 255,
-                'tooLong' => 'Поле {$attribute} должен содержать не более 255 символов',
+                'tooLong' => '{attribute} должен содержать не более 255 символов',
             ],
             [
                 ['type', 'verification_certificate', 'country'],
                 'string',
                 'max' => 100,
-                'tooLong' => 'Поле {$attribute} должен содержать не более 100 символов',
+                'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             [
                 ['factory_number', 'inventory_number'],
@@ -82,7 +89,7 @@ class MeasuringInstrument extends ActiveRecord
                 ['manufacturer'],
                 'string',
                 'max' => 120,
-                'tooLong' => 'Поле {$attribute} должен содержать не более 120 символов',
+                'tooLong' => '{attribute} должен содержать не более 120 символов',
             ],
             [
                 ['factory_number'],
@@ -93,6 +100,12 @@ class MeasuringInstrument extends ActiveRecord
                 ['inventory_number'],
                 'unique',
                 'message' => 'Указанный инвентарный номер уже зарегистрирован в системе',
+            ],
+            [
+                ['validity_date_from', 'validity_date_to'],
+                'datetime',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} содержит неверный формат',
             ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
             [['placement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Placement::className(), 'targetAttribute' => ['placement_id' => 'id']],
