@@ -5,18 +5,18 @@ namespace api\models\measuringInstrument;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\MeasuringInstrument as BaseMeasuringInstrument;
+use common\models\TestEquipment as BaseTestEquipment;
 
-class MeasuringInstrumentSearchForm extends Model
+class TestEquipmentSearchForm extends Model
 {
 
     const DEFAULT_PAGE_SIZE = 14;
 
-    public $name_mi;
-    public $factory_number_mi;
-    public $inventory_number_mi;
-    public $certificate_mi;
-    public $status_mi;
+    public $name_te;
+    public $factory_number_te;
+    public $inventory_number_te;
+    public $attestation_te;
+    public $status_te;
     public $page_size = self::DEFAULT_PAGE_SIZE;
     public $page_number = 0;
 
@@ -24,18 +24,18 @@ class MeasuringInstrumentSearchForm extends Model
     {
         return [
             [
-                ['name_mi'],
+                ['name_te'],
                 'string',
                 'max' => 255,
                 'tooLong' => '{attribute} должен содержать не более 255 символов',
             ],
             [
-                ['factory_number_mi', 'inventory_number_mi', 'certificate_mi'],
+                ['factory_number_te', 'inventory_number_te', 'certificate_te'],
                 'string',
                 'max' => 100,
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
-            ['status_mi', 'integer'],
+            ['status_te', 'integer'],
         ];
 
     }
@@ -47,7 +47,7 @@ class MeasuringInstrumentSearchForm extends Model
 
     public function search()
     {
-        $query = BaseMeasuringInstrument::find();
+        $query = BaseTestEquipment::find();
         $data_provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -65,24 +65,24 @@ class MeasuringInstrumentSearchForm extends Model
             return $data_provider;
         }
 
-        if ($this->name_mi) {
-            $query->andFilterWhere(['like', 'name', $this->name_mi]);
+        if ($this->name_te) {
+            $query->andFilterWhere(['like', 'name', $this->name_te]);
         }
 
-        if ($this->factory_number_mi) {
-            $query->andWhere(['factory_number' => $this->factory_number_mi]);
+        if ($this->factory_number_te) {
+            $query->andWhere(['factory_number' => $this->factory_number_te]);
         }
 
-        if ($this->inventory_number_mi) {
-            $query->andWhere(['inventory_number' => $this->inventory_number_mi]);
+        if ($this->inventory_number_te) {
+            $query->andWhere(['inventory_number' => $this->inventory_number_te]);
         }
 
-        if ($this->certificate_mi) {
-            $query->andWhere(['LIKE', 'verification_certificate', $this->certificate_mi]);
+        if ($this->attestation_te) {
+            $query->andWhere(['LIKE', 'attestation_document', $this->attestation_te]);
         }
 
-        if ($this->status_mi) {
-            $query->andWhere(['status_verification' => (int) $this->status_mi]);
+        if ($this->status_te) {
+            $query->andWhere(['status_verification' => (int) $this->status_te]);
         }
 
         return $data_provider;
@@ -91,11 +91,11 @@ class MeasuringInstrumentSearchForm extends Model
     public function attributeLabels()
     {
         return [
-            'name_mi' => 'Наименование средства измерения',
-            'factory_number_mi' => 'Заводской номер',
-            'inventory_number_mi' => 'Инвентарный номер',
-            'certificate_mi' => 'Сертификат',
-            'status_mi' => 'Статус поверки',
+            'name_te' => 'Наименование средства измерения',
+            'factory_number_te' => 'Заводской номер',
+            'inventory_number_te' => 'Инвентарный номер',
+            'attestation_te' => 'Документ об аттестации',
+            'status_te' => 'Статус поверки',
         ];
     }
 

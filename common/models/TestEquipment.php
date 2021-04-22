@@ -7,22 +7,21 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "measuring_instrument".
- * Средства измерений
+ * This is the model class for table "test_equipment".
+ * Испытательное оборудование
  *
  * @property int $id
  * @property string $name
  * @property int|null $eqp_function_id
+ * @property int|null $test_group_id
  * @property string|null $type
  * @property string|null $factory_number
  * @property string|null $commissioning_year
  * @property string|null $inventory_number
- * @property string|null $measuring_range
- * @property string|null $accuracy_class
- * @property string $verification_certificate
+ * @property string|null $specifications
+ * @property string $attestation_document
  * @property string $validity_date_from
  * @property string $validity_date_to
- * @property int|null $annually
  * @property int|null $status_verification
  * @property string|null $manufacturer
  * @property string|null $country
@@ -33,17 +32,17 @@ use yii\helpers\ArrayHelper;
  *
  * @property EquipmentFunction $function
  * @property Placement $placement
+ * @property TestGroup $testGroup
  * @property TypeOwn $typeOwn
  */
-
-class MeasuringInstrument extends ActiveRecord
+class TestEquipment extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%measuring_instrument}}';
+        return 'test_equipment';
     }
 
     /**
@@ -55,7 +54,7 @@ class MeasuringInstrument extends ActiveRecord
             [
                 [
                     'name',
-                    'verification_certificate',
+                    'attestation_document',
                     'validity_date_from',
                     'validity_date_to',
                     'factory_number',
@@ -64,17 +63,17 @@ class MeasuringInstrument extends ActiveRecord
                 'required',
                 'message' => '{attribute} обязательно для заполнения',
             ],
-            [['eqp_function_id', 'annually', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
-            [['accuracy_class', 'note'], 'string'],
+            [['eqp_function_id', 'test_group_id', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
             [['validity_date_from', 'validity_date_to'], 'safe'],
+            [['note'], 'string'],
             [
-                ['name', 'measuring_range'],
+                ['name', 'specifications'],
                 'string',
                 'max' => 255,
                 'tooLong' => '{attribute} должен содержать не более 255 символов',
             ],
             [
-                ['type', 'verification_certificate', 'country'],
+                ['type', 'country'],
                 'string',
                 'max' => 100,
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
@@ -83,20 +82,20 @@ class MeasuringInstrument extends ActiveRecord
                 ['factory_number', 'inventory_number'],
                 'string',
                 'max' => 70,
-                'tooLong' => 'Поле {$attribute} должен содержать не более 70 символов',
+                'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
             [['commissioning_year', 'year_issue'], 'string', 'max' => 4],
+            [
+                ['attestation_document', 'manufacturer'],
+                'string',
+                'max' => 120,
+                'tooLong' => '{attribute} должен содержать не более 1000 символов',
+            ],
             [
                 'note',
                 'string',
                 'max' => 1000,
                 'tooLong' => '{attribute} должен содержать не более 1000 символов',
-            ],
-            [
-                ['manufacturer'],
-                'string',
-                'max' => 120,
-                'tooLong' => '{attribute} должен содержать не более 120 символов',
             ],
             [
                 ['factory_number', 'inventory_number'],
@@ -105,18 +104,9 @@ class MeasuringInstrument extends ActiveRecord
             ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
             [['placement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Placement::className(), 'targetAttribute' => ['placement_id' => 'id']],
+            [['test_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TestGroup::className(), 'targetAttribute' => ['test_group_id' => 'id']],
             [['type_own_id'], 'exist', 'skipOnError' => true, 'targetClass' => TypeOwn::className(), 'targetAttribute' => ['type_own_id' => 'id']],
         ];
-    }
-
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $this->validity_date_from = Yii::$app->formatter->asDate($this->validity_date_from, 'yyyy-MM-dd');
-            $this->validity_date_to = Yii::$app->formatter->asDate($this->validity_date_to, 'yyyy-MM-dd');
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -140,6 +130,16 @@ class MeasuringInstrument extends ActiveRecord
     }
 
     /**
+     * Gets query for [[TestGroup]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTestGroup()
+    {
+        return $this->hasOne(TestGroup::className(), ['id' => 'test_group_id']);
+    }
+
+    /**
      * Gets query for [[TypeOwn]].
      *
      * @return \yii\db\ActiveQuery
@@ -149,35 +149,6 @@ class MeasuringInstrument extends ActiveRecord
         return $this->hasOne(TypeOwn::className(), ['id' => 'type_own_id']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'Уникальный идентификатор',
-            'name' => 'Наименование средства измерения',
-            'eqp_function_id' => 'Назначение',
-            'type' => 'Тип (марка)',
-            'factory_number' => 'Заводской номер',
-            'commissioning_year' => 'Год ввода в эксплуатацию',
-            'inventory_number' => 'Инвентарный номер',
-            'measuring_range' => 'Диапазон измерений',
-            'accuracy_class' => 'Класс точности (разряд), погрешность',
-            'verification_certificate' => 'Свидетельство о поверке',
-            'validity_date_from' => 'Срок действия свидетельства (от)',
-            'validity_date_to' => 'Срок действия свидетельства (до)',
-            'annually' => 'Ежегодная поверка',
-            'status_verification' => 'Статус поверки',
-            'manufacturer' => 'Производитель',
-            'country' => 'Страна',
-            'year_issue' => 'Год выпуска',
-            'type_own_id' => 'Право собственности',
-            'placement_id' => 'Место установки или хранения',
-            'note' => 'Примечание',
-        ];
-    }
-
     public function fields()
     {
         $fields = ArrayHelper::merge(
@@ -185,6 +156,9 @@ class MeasuringInstrument extends ActiveRecord
             [
                 'function' => function() {
                     return $this->function;
+                },
+                'group' => function() {
+                    return $this->testGroup;
                 },
                 'type_own' => function() {
                     return $this->typeOwn;
@@ -200,6 +174,34 @@ class MeasuringInstrument extends ActiveRecord
         ArrayHelper::remove($fields, 'placement_id');
 
         return $fields;
-
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'Уникальный идентификатор',
+            'name' => 'Наименование испытательного оборудования',
+            'eqp_function_id' => 'Назначение',
+            'test_group_id' => 'Наименование испытуемых групп объектов',
+            'type' => 'Тип (марка)',
+            'factory_number' => 'Заводской номер',
+            'commissioning_year' => 'Год ввода в эксплуатацию',
+            'inventory_number' => 'Инвентарный номер',
+            'specifications' => 'Технические характеристики',
+            'attestation_document' => 'Документ об аттестации',
+            'validity_date_from' => 'Срок действия (от)',
+            'validity_date_to' => 'Срок действия (до)',
+            'status_verification' => 'Статус поверки',
+            'manufacturer' => 'Производитель',
+            'country' => 'Страна',
+            'year_issue' => 'Год выпуска',
+            'type_own_id' => 'Право собственности',
+            'placement_id' => 'Место установки или хранения',
+            'note' => 'Примечание',
+        ];
+    }
+
 }
