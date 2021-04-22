@@ -76,6 +76,7 @@ return [
                     'extraPatterns' => [
                         'DELETE delete/<id:\d+>' => 'delete',
                         'GET view/<id:\d+>' => 'view',
+                        'PUT update' => 'update',
                         'POST create' => 'create',
                     ]
                 ],

@@ -68,7 +68,7 @@ class UserController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(422, 422, ['Не передан уникальный идентификатор пользователя']);
+            return $this->error(422, 422, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $post_data['id']]);
@@ -114,7 +114,7 @@ class UserController extends RestAuthController
         }
 
         if ($user->delete()) {
-            $this->success();
+            return $this->success();
         }
 
         return $this->error(500, 500, ['Ошибка удаления пользователя']);

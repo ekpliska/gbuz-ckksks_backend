@@ -3,12 +3,11 @@
 
 namespace api\modules\v1\controllers;
 
-use api\models\User;
 use Yii;
 use common\controllers\RestAuthController;
 use api\models\measuringInstrument\MeasuringInstrument;
 use api\models\measuringInstrument\MeasuringInstrumentSearchForm;
-use yii\base\BaseObject;
+use yii\helpers\ArrayHelper;
 
 class MeasuringInstrumentController extends RestAuthController
 {
@@ -19,6 +18,7 @@ class MeasuringInstrumentController extends RestAuthController
         $verbs_props = [
             'index' => ['GET'],
             'create' => ['POST'],
+            'update' => ['PUT'],
             'view' => ['GET'],
             'delete' => ['DELETE'],
         ]
@@ -61,6 +61,33 @@ class MeasuringInstrumentController extends RestAuthController
         ]);
     }
 
+    public function actionUpdate()
+    {
+        $post_data = Yii::$app->request->bodyParams;
+
+        if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
+            return $this->error(422, 422, ['Не передан уникальный идентификатор']);
+        }
+
+        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $post_data['id']]);
+
+        if (!$measuring_instrument) {
+            return $this->error(404, 404, ['Средство измерения не найдено']);
+        }
+
+        if ($measuring_instrument->load($post_data, '')) {
+            if (!$measuring_instrument->validate()) {
+                return $this->error(422, 422, $measuring_instrument->getErrorSummary($measuring_instrument->errors));
+            }
+            if (!$measuring_instrument->save()) {
+                return $this->error(501, 501, null);
+            }
+            return $this->success($measuring_instrument);
+        }
+
+        return $this->error(500, 500, null);
+    }
+
     public function actionView($id)
     {
         if (!$id) {
@@ -90,7 +117,7 @@ class MeasuringInstrumentController extends RestAuthController
         }
 
         if ($measuring_instrument->delete()) {
-            $this->success();
+            return $this->success();
         }
 
         return $this->error(500, 500, ['Ошибка удаления записи']);

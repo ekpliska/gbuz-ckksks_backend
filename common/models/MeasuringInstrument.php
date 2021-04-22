@@ -37,6 +37,7 @@ use yii\db\ActiveRecord;
 
 class MeasuringInstrument extends ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -101,16 +102,20 @@ class MeasuringInstrument extends ActiveRecord
                 'unique',
                 'message' => 'Указанный инвентарный номер уже зарегистрирован в системе',
             ],
-            [
-                ['validity_date_from', 'validity_date_to'],
-                'datetime',
-                'format' => 'php:Y-m-d',
-                'message' => '{attribute} содержит неверный формат',
-            ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
             [['placement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Placement::className(), 'targetAttribute' => ['placement_id' => 'id']],
             [['type_own_id'], 'exist', 'skipOnError' => true, 'targetClass' => TypeOwn::className(), 'targetAttribute' => ['type_own_id' => 'id']],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->validity_date_from = Yii::$app->formatter->asDate($this->validity_date_from, 'yyyy-MM-dd');
+            $this->validity_date_to = Yii::$app->formatter->asDate($this->validity_date_to, 'yyyy-MM-dd');
+            return true;
+        }
+        return false;
     }
 
     /**
