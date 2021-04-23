@@ -71,7 +71,10 @@ return [
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'v1/measuring-instrument',
+                    'controller' => [
+                        'v1/measuring-instrument',
+                        'v1/test-equipment',
+                    ],
                     'pluralize' => false,
                     'extraPatterns' => [
                         'DELETE delete/<id:\d+>' => 'delete',

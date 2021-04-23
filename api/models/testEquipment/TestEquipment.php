@@ -1,6 +1,6 @@
 <?php
 
-namespace api\models\measuringInstrument;
+namespace api\models\testEquipment;
 
 use Yii;
 use common\models\TestEquipment as BaseTestEquipment;

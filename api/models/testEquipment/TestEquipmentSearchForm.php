@@ -1,7 +1,7 @@
 <?php
 
 
-namespace api\models\measuringInstrument;
+namespace api\models\testEquipment;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -30,7 +30,7 @@ class TestEquipmentSearchForm extends Model
                 'tooLong' => '{attribute} должен содержать не более 255 символов',
             ],
             [
-                ['factory_number_te', 'inventory_number_te', 'certificate_te'],
+                ['factory_number_te', 'inventory_number_te', 'attestation_te'],
                 'string',
                 'max' => 100,
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
