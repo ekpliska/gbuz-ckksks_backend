@@ -74,6 +74,7 @@ return [
                     'controller' => [
                         'v1/measuring-instrument',
                         'v1/test-equipment',
+                        'v1/auxiliary-equipment',
                     ],
                     'pluralize' => false,
                     'extraPatterns' => [

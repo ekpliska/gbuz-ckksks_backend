@@ -91,7 +91,7 @@ class TestEquipmentSearchForm extends Model
     public function attributeLabels()
     {
         return [
-            'name_te' => 'Наименование средства измерения',
+            'name_te' => 'Наименование вспомогательного оборудования',
             'factory_number_te' => 'Заводской номер',
             'inventory_number_te' => 'Инвентарный номер',
             'attestation_te' => 'Документ об аттестации',

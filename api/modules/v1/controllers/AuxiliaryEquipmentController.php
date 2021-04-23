@@ -5,14 +5,14 @@ namespace api\modules\v1\controllers;
 
 use Yii;
 use common\controllers\RestAuthController;
-use api\models\measuringInstrument\MeasuringInstrument;
-use api\models\measuringInstrument\MeasuringInstrumentSearchForm;
 use yii\helpers\ArrayHelper;
+use api\models\auxiliaryEquipment\AuxiliaryEquipment;
+use api\models\auxiliaryEquipment\AuxiliaryEquipmentSearchForm;
 
-class MeasuringInstrumentController extends RestAuthController
+class AuxiliaryEquipmentController extends RestAuthController
 {
 
-    public $modelClass = 'api\models\measuringInstrument\MeasuringInstrument';
+    public $modelClass = 'api\models\auxiliaryEquipment\AuxiliaryEquipment';
 
     public function behaviors(
         $verbs_props = [
@@ -31,10 +31,10 @@ class MeasuringInstrumentController extends RestAuthController
     {
         $query_data = Yii::$app->request->queryParams;
 
-        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : MeasuringInstrumentSearchForm::DEFAULT_PAGE_SIZE;
+        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : AuxiliaryEquipmentSearchForm::DEFAULT_PAGE_SIZE;
         $page_number = $query_data && $query_data['page_number'] ? $query_data['page_number'] : 0;
 
-        $search_model = new MeasuringInstrumentSearchForm($query_data);
+        $search_model = new AuxiliaryEquipmentSearchForm($query_data);
         $result = $search_model->search();
 
         return $this->success([
@@ -48,7 +48,7 @@ class MeasuringInstrumentController extends RestAuthController
     public function actionCreate()
     {
         $post_data = Yii::$app->request->bodyParams;
-        $model = new MeasuringInstrument();
+        $model = new AuxiliaryEquipment();
         $model->load($post_data, '');
         $model->setAttributes($post_data);
 
@@ -69,20 +69,20 @@ class MeasuringInstrumentController extends RestAuthController
             return $this->error(422, 422, ['Не передан уникальный идентификатор']);
         }
 
-        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $post_data['id']]);
+        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $post_data['id']]);
 
-        if (!$measuring_instrument) {
-            return $this->error(404, 404, ['Средство измерения не найдено']);
+        if (!$auxiliary_equipment) {
+            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
         }
 
-        if ($measuring_instrument->load($post_data, '')) {
-            if (!$measuring_instrument->validate()) {
-                return $this->error(422, 422, $measuring_instrument->getErrorSummary($measuring_instrument->errors));
+        if ($auxiliary_equipment->load($post_data, '')) {
+            if (!$auxiliary_equipment->validate()) {
+                return $this->error(422, 422, $auxiliary_equipment->getErrorSummary($auxiliary_equipment->errors));
             }
-            if (!$measuring_instrument->save()) {
+            if (!$auxiliary_equipment->save()) {
                 return $this->error(501, 501, null);
             }
-            return $this->success($measuring_instrument);
+            return $this->success($auxiliary_equipment);
         }
 
         return $this->error(500, 500, null);
@@ -94,13 +94,13 @@ class MeasuringInstrumentController extends RestAuthController
             return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
-        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $id]);
+        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $id]);
 
-        if (!$measuring_instrument) {
-            return $this->error(404, 404, ['Средство измерения не найдено']);
+        if (!$auxiliary_equipment) {
+            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
         }
 
-        $this->success($measuring_instrument);
+        $this->success($auxiliary_equipment);
 
     }
 
@@ -110,13 +110,13 @@ class MeasuringInstrumentController extends RestAuthController
             return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
-        $measuring_instrument = MeasuringInstrument::findOne(['id' => (int) $id]);
+        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $id]);
 
-        if (!$measuring_instrument) {
-            return $this->error(404, 404, ['Средство измерения не найдено']);
+        if (!$auxiliary_equipment) {
+            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
         }
 
-        if ($measuring_instrument->delete()) {
+        if ($auxiliary_equipment->delete()) {
             return $this->success();
         }
 

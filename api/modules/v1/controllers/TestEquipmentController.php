@@ -6,13 +6,13 @@ namespace api\modules\v1\controllers;
 use Yii;
 use common\controllers\RestAuthController;
 use yii\helpers\ArrayHelper;
-use api\models\testEquipment\TestEquipmentSearchForm;
 use api\models\testEquipment\TestEquipment;
+use api\models\testEquipment\TestEquipmentSearchForm;
 
 class TestEquipmentController extends RestAuthController
 {
 
-    public $modelClass = 'api\models\TestEquipment';
+    public $modelClass = 'api\models\testEquipment\AuxiliaryEquipment';
 
     public function behaviors(
         $verbs_props = [
