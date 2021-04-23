@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "auxiliary_equipment".
@@ -113,6 +114,30 @@ class AuxiliaryEquipment extends ActiveRecord
     public function getTypeOwn()
     {
         return $this->hasOne(TypeOwn::className(), ['id' => 'type_own_id']);
+    }
+
+    public function fields()
+    {
+        $fields = ArrayHelper::merge(
+            parent::fields(),
+            [
+                'function' => function() {
+                    return $this->function;
+                },
+                'type_own' => function() {
+                    return $this->typeOwn;
+                },
+                'placement' => function() {
+                    return $this->placement;
+                },
+            ]
+        );
+
+        ArrayHelper::remove($fields, 'eqp_function_id');
+        ArrayHelper::remove($fields, 'type_own_id');
+        ArrayHelper::remove($fields, 'placement_id');
+
+        return $fields;
     }
 
     /**

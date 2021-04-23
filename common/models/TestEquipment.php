@@ -149,6 +149,16 @@ class TestEquipment extends ActiveRecord
         return $this->hasOne(TypeOwn::className(), ['id' => 'type_own_id']);
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->validity_date_from = Yii::$app->formatter->asDate($this->validity_date_from, 'yyyy-MM-dd');
+            $this->validity_date_to = Yii::$app->formatter->asDate($this->validity_date_to, 'yyyy-MM-dd');
+            return true;
+        }
+        return false;
+    }
+
     public function fields()
     {
         $fields = ArrayHelper::merge(
@@ -170,6 +180,7 @@ class TestEquipment extends ActiveRecord
         );
 
         ArrayHelper::remove($fields, 'eqp_function_id');
+        ArrayHelper::remove($fields, 'test_group_id');
         ArrayHelper::remove($fields, 'type_own_id');
         ArrayHelper::remove($fields, 'placement_id');
 
