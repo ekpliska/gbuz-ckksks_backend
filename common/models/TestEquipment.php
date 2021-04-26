@@ -42,7 +42,7 @@ class TestEquipment extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'test_equipment';
+        return '{{%test_equipment}}';
     }
 
     /**

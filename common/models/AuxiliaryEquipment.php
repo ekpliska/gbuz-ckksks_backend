@@ -35,7 +35,7 @@ class AuxiliaryEquipment extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'auxiliary_equipment';
+        return '{{%auxiliary_equipment}}';
     }
 
     /**

@@ -29,9 +29,9 @@ class m210412_164951_add__industrial_premise extends Migration
             // TODO: подумать как хранить, массивом IDs или через промежуточную таблицу
             'special_equipments' => $this->string(255),
             'document_type_id' => $this->integer(),
-            'series' => $this->string(30),
-            'number' => $this->string(30),
-            'date' => $this->dateTime(),
+            'series' => $this->string(30)->notNull(),
+            'number' => $this->string(30)->notNull(),
+            'date' => $this->dateTime()->notNull(),
             'note' => $this->text(1000),
         ], $table_options);
 

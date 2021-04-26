@@ -6,13 +6,13 @@ namespace api\modules\v1\controllers;
 use Yii;
 use common\controllers\RestAuthController;
 use yii\helpers\ArrayHelper;
-use api\models\auxiliaryEquipment\AuxiliaryEquipment;
-use api\models\auxiliaryEquipment\StandardSampleSearchForm;
+use api\models\standardSample\StandardSample;
+use api\models\standardSample\IndustrialPremiseSearchForm;
 
-class AuxiliaryEquipmentController extends RestAuthController
+class StandardSampleController extends RestAuthController
 {
 
-    public $modelClass = 'api\models\auxiliaryEquipment\AuxiliaryEquipment';
+    public $modelClass = 'api\models\standardSample\StandardSample';
 
     public function behaviors(
         $verbs_props = [
@@ -31,10 +31,10 @@ class AuxiliaryEquipmentController extends RestAuthController
     {
         $query_data = Yii::$app->request->queryParams;
 
-        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : StandardSampleSearchForm::DEFAULT_PAGE_SIZE;
+        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : IndustrialPremiseSearchForm::DEFAULT_PAGE_SIZE;
         $page_number = $query_data && $query_data['page_number'] ? $query_data['page_number'] : 0;
 
-        $search_model = new StandardSampleSearchForm($query_data);
+        $search_model = new IndustrialPremiseSearchForm($query_data);
         $result = $search_model->search();
 
         return $this->success([
@@ -48,7 +48,7 @@ class AuxiliaryEquipmentController extends RestAuthController
     public function actionCreate()
     {
         $post_data = Yii::$app->request->bodyParams;
-        $model = new AuxiliaryEquipment();
+        $model = new StandardSample();
         $model->load($post_data, '');
         $model->setAttributes($post_data);
 
@@ -69,20 +69,20 @@ class AuxiliaryEquipmentController extends RestAuthController
             return $this->error(422, 422, ['Не передан уникальный идентификатор']);
         }
 
-        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $post_data['id']]);
+        $standard_sample = StandardSample::findOne(['id' => (int) $post_data['id']]);
 
-        if (!$auxiliary_equipment) {
-            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
+        if (!$standard_sample) {
+            return $this->error(404, 404, ['Стандартный образец не найдено']);
         }
 
-        if ($auxiliary_equipment->load($post_data, '')) {
-            if (!$auxiliary_equipment->validate()) {
-                return $this->error(422, 422, $auxiliary_equipment->getErrorSummary($auxiliary_equipment->errors));
+        if ($standard_sample->load($post_data, '')) {
+            if (!$standard_sample->validate()) {
+                return $this->error(422, 422, $standard_sample->getErrorSummary($standard_sample->errors));
             }
-            if (!$auxiliary_equipment->save()) {
+            if (!$standard_sample->save()) {
                 return $this->error(501, 501, null);
             }
-            return $this->success($auxiliary_equipment);
+            return $this->success($standard_sample);
         }
 
         return $this->error(500, 500, null);
@@ -94,13 +94,13 @@ class AuxiliaryEquipmentController extends RestAuthController
             return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
-        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $id]);
+        $standard_sample = StandardSample::findOne(['id' => (int) $id]);
 
-        if (!$auxiliary_equipment) {
-            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
+        if (!$standard_sample) {
+            return $this->error(404, 404, ['Стандартный образец не найдено']);
         }
 
-        $this->success($auxiliary_equipment);
+        $this->success($standard_sample);
 
     }
 
@@ -110,13 +110,13 @@ class AuxiliaryEquipmentController extends RestAuthController
             return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
-        $auxiliary_equipment = AuxiliaryEquipment::findOne(['id' => (int) $id]);
+        $standard_sample = StandardSample::findOne(['id' => (int) $id]);
 
-        if (!$auxiliary_equipment) {
-            return $this->error(404, 404, ['Вспомогательное оборудование не найдено']);
+        if (!$standard_sample) {
+            return $this->error(404, 404, ['Стандартный образец не найдено']);
         }
 
-        if ($auxiliary_equipment->delete()) {
+        if ($standard_sample->delete()) {
             return $this->success();
         }
 

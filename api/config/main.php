@@ -75,6 +75,8 @@ return [
                         'v1/measuring-instrument',
                         'v1/test-equipment',
                         'v1/auxiliary-equipment',
+                        'v1/standard-sample',
+                        'v1/IndustrialPremise',
                     ],
                     'pluralize' => false,
                     'extraPatterns' => [
