@@ -2,6 +2,7 @@
 
 namespace common\traits;
 
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -9,7 +10,15 @@ trait JsonResponse
 {
 
     public function success($data = null) {
-        return $this->asJson(isset($data) ? $data : ['error' => null]);
+//        var_dump($data);
+        return ArrayHelper::merge(
+            [
+                'success' => true,
+            ],
+            [
+                'result' => isset($data) ? $data : null
+            ]
+        );
     }
 
     public function error(int $status_code = null, $error_code = null, $message = null) {
@@ -24,6 +33,7 @@ trait JsonResponse
         }
 
         $response = $this->asJson([
+            'success' => false,
             'error' => $error_body,
         ]);
 

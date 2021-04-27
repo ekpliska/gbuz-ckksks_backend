@@ -6,9 +6,9 @@ namespace api\modules\v1\controllers;
 use Yii;
 use yii\helpers\ArrayHelper;
 use common\controllers\RestAuthController;
-use api\models\forms\MeasuringInstrumentForm;
-use api\models\forms\UserFrom;
-use api\models\User;
+use api\models\user\UserSearchForm;
+use api\models\user\UserFrom;
+use api\models\user\User;
 
 class UserController extends RestAuthController
 {
@@ -33,14 +33,14 @@ class UserController extends RestAuthController
 
         $query_data = Yii::$app->request->queryParams;
 
-        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : MeasuringInstrumentForm::DEFAULT_PAGE_SIZE;
+        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : UserSearchForm::DEFAULT_PAGE_SIZE;
         $page_number = $query_data && $query_data['page_number'] ? $query_data['page_number'] : 0;
 
-        $search_model = new MeasuringInstrumentForm($query_data);
+        $search_model = new UserSearchForm($query_data);
         $result = $search_model->search();
 
         return $this->success([
-            'data' => $result->getModels(),
+            'items' => $result->getModels(),
             'pageSize' => (int) $page_size,
             'pageNumber' => (int) $page_number,
             'totalCount' => (int) $result->getTotalCount(),
@@ -51,15 +51,18 @@ class UserController extends RestAuthController
     {
         $post_data = Yii::$app->request->bodyParams;
         $model = new UserFrom();
-        $model->load($post_data, '');
         $model->setAttributes($post_data);
-        if (!$model->save()) {
-            return $this->error(422, 422, $model->getErrorSummary($model->errors));
+
+        if ($model->load($post_data, '')) {
+            if (!$model->validate()) {
+                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+            }
+            if (!$model->save()) {
+                return $this->error(409, 409, ['Ошибка создания записи']);;
+            }
         }
 
-        return $this->success([
-            'success' => true,
-        ]);
+        return $this->success($model);
 
     }
 
@@ -68,7 +71,7 @@ class UserController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(422, 422, ['Не передан уникальный идентификатор']);
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $post_data['id']]);
@@ -117,7 +120,7 @@ class UserController extends RestAuthController
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Ошибка удаления пользователя']);
+        return $this->error(500, 500, ['Внутренная ошибка сервера']);
     }
 
 }

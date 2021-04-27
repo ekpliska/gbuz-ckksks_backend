@@ -1,6 +1,6 @@
 <?php
 
-namespace api\models;
+namespace api\models\user;
 
 use yii\helpers\ArrayHelper;
 use common\models\User as BaseUser;

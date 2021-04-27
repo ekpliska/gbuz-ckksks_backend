@@ -1,7 +1,7 @@
 <?php
 
 
-namespace api\models\forms;
+namespace api\models\user;
 
 use Yii;
 use yii\db\BaseActiveRecord;

@@ -1,6 +1,6 @@
 <?php
 
-namespace api\models\forms;
+namespace api\models;
 
 use yii\base\Model;
 use common\models\User;
@@ -10,8 +10,6 @@ class SignInForm extends Model
 
     public $username;
     public $password;
-
-    private $_user;
 
     public function rules()
     {
@@ -55,8 +53,7 @@ class SignInForm extends Model
 
     protected function getUser()
     {
-        $this->_user = User::findByUsername($this->username);
-        return $this->_user;
+        return User::findByUsername($this->username);
     }
 
     public function attributeLabels()

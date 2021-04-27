@@ -1,12 +1,13 @@
 <?php
 
 
-namespace api\models\forms;
+namespace api\models\user;
 
+use yii\base\Model;
 use common\models\User as BaseUser;
 use yii\data\ActiveDataProvider;
 
-class UserSearchForm extends BaseUser
+class UserSearchForm extends Model
 {
 
     const DEFAULT_PAGE_SIZE = 14;

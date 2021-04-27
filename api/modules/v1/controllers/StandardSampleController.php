@@ -7,7 +7,7 @@ use Yii;
 use common\controllers\RestAuthController;
 use yii\helpers\ArrayHelper;
 use api\models\standardSample\StandardSample;
-use api\models\standardSample\IndustrialPremiseSearchForm;
+use api\models\standardSample\StandardSampleSearchForm;
 
 class StandardSampleController extends RestAuthController
 {
@@ -31,14 +31,14 @@ class StandardSampleController extends RestAuthController
     {
         $query_data = Yii::$app->request->queryParams;
 
-        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : IndustrialPremiseSearchForm::DEFAULT_PAGE_SIZE;
+        $page_size = $query_data && $query_data['page_size'] ? $query_data['page_size'] : StandardSampleSearchForm::DEFAULT_PAGE_SIZE;
         $page_number = $query_data && $query_data['page_number'] ? $query_data['page_number'] : 0;
 
-        $search_model = new IndustrialPremiseSearchForm($query_data);
+        $search_model = new StandardSampleSearchForm($query_data);
         $result = $search_model->search();
 
         return $this->success([
-            'data' => $result->getModels(),
+            'items' => $result->getModels(),
             'pageSize' => (int) $page_size,
             'pageNumber' => (int) $page_number,
             'totalCount' => (int) $result->getTotalCount(),
@@ -49,16 +49,18 @@ class StandardSampleController extends RestAuthController
     {
         $post_data = Yii::$app->request->bodyParams;
         $model = new StandardSample();
-        $model->load($post_data, '');
         $model->setAttributes($post_data);
 
-        if (!$model->save()) {
-            return $this->error(422, 422, $model->getErrorSummary($model->errors));
+        if ($model->load($post_data, '')) {
+            if (!$model->validate()) {
+                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+            }
+            if (!$model->save()) {
+                return $this->error(409, 409, ['Ошибка создания записи']);;
+            }
         }
 
-        return $this->success([
-            'success' => true,
-        ]);
+        return $this->success($model);
     }
 
     public function actionUpdate()
@@ -66,7 +68,7 @@ class StandardSampleController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(422, 422, ['Не передан уникальный идентификатор']);
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
         $standard_sample = StandardSample::findOne(['id' => (int) $post_data['id']]);
@@ -80,12 +82,12 @@ class StandardSampleController extends RestAuthController
                 return $this->error(422, 422, $standard_sample->getErrorSummary($standard_sample->errors));
             }
             if (!$standard_sample->save()) {
-                return $this->error(501, 501, null);
+                return $this->error(409, 409, ['Ошибка обновления записи']);
             }
             return $this->success($standard_sample);
         }
 
-        return $this->error(500, 500, null);
+        return $this->error(500, 500, ['Внутренная ошибка сервера']);
     }
 
     public function actionView($id)
@@ -120,7 +122,7 @@ class StandardSampleController extends RestAuthController
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Ошибка удаления записи']);
+        return $this->error(500, 500, ['Внутренная ошибка сервера']);
     }
 
 }

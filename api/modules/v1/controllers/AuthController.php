@@ -4,7 +4,7 @@ namespace api\modules\v1\controllers;
 
 use Yii;
 use common\controllers\RestController;
-use api\models\forms\SignInForm;
+use api\models\SignInForm;
 
 class AuthController extends RestController
 {

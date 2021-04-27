@@ -38,7 +38,7 @@ class EmployeeController extends RestAuthController
         $result = $search_model->search();
 
         return $this->success([
-            'data' => $result->getModels(),
+            'items' => $result->getModels(),
             'pageSize' => (int) $page_size,
             'pageNumber' => (int) $page_number,
             'totalCount' => (int) $result->getTotalCount(),
@@ -49,16 +49,18 @@ class EmployeeController extends RestAuthController
     {
         $post_data = Yii::$app->request->bodyParams;
         $model = new Employee();
-        $model->load($post_data, '');
         $model->setAttributes($post_data);
 
-        if (!$model->save()) {
-            return $this->error(422, 422, $model->getErrorSummary($model->errors));
+        if ($model->load($post_data, '')) {
+            if (!$model->validate()) {
+                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+            }
+            if (!$model->save()) {
+                return $this->error(409, 409, ['Ошибка создания записи']);;
+            }
         }
 
-        return $this->success([
-            'success' => true,
-        ]);
+        return $this->success($model);
     }
 
     public function actionUpdate()
@@ -66,7 +68,7 @@ class EmployeeController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(422, 422, ['Не передан уникальный идентификатор']);
+            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
         }
 
         $employee = Employee::findOne(['id' => (int) $post_data['id']]);
@@ -80,12 +82,12 @@ class EmployeeController extends RestAuthController
                 return $this->error(422, 422, $employee->getErrorSummary($employee->errors));
             }
             if (!$employee->save()) {
-                return $this->error(501, 501, null);
+                return $this->error(409, 409, ['Ошибка обновления записи']);
             }
             return $this->success($employee);
         }
 
-        return $this->error(500, 500, null);
+        return $this->error(500, 500, ['Внутренная ошибка сервера']);
     }
 
     public function actionView($id)
@@ -100,7 +102,7 @@ class EmployeeController extends RestAuthController
             return $this->error(404, 404, ['Сотрудник не найден']);
         }
 
-        $this->success($employee);
+        return $this->success($employee);
 
     }
 
@@ -120,7 +122,7 @@ class EmployeeController extends RestAuthController
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Ошибка удаления записи']);
+        return $this->error(500, 500, ['Внутренная ошибка сервера']);
     }
 
 }
