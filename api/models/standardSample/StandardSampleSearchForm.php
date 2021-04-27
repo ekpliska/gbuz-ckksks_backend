@@ -36,6 +36,7 @@ class StandardSampleSearchForm extends Model
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             [['shelf_life_ss'], 'safe'],
+            [['name_ss', 'manufacturer_ss', 'normative_document_ss'], 'trim'],
         ];
 
     }

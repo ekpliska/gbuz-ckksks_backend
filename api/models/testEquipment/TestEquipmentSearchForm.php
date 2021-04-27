@@ -36,6 +36,7 @@ class TestEquipmentSearchForm extends Model
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             ['status_te', 'integer'],
+            [['name_te', 'factory_number_te', 'inventory_number_te', 'attestation_te'], 'trim'],
         ];
 
     }

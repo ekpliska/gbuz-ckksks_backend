@@ -77,6 +77,7 @@ return [
                         'v1/auxiliary-equipment',
                         'v1/standard-sample',
                         'v1/IndustrialPremise',
+                        'v1/employee',
                     ],
                     'pluralize' => false,
                     'extraPatterns' => [

@@ -36,6 +36,7 @@ class MeasuringInstrumentSearchForm extends Model
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             ['status_mi', 'integer'],
+            [['name_mi', 'factory_number_mi', 'inventory_number_mi', 'certificate_mi'], 'trim'],
         ];
 
     }
