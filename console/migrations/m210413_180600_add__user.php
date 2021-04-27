@@ -26,11 +26,22 @@ class m210413_180600_add__user extends Migration
             'token' => $this->string(255)->notNull(),
             'auth_key' => $this->string(255),
             'status' => $this->tinyInteger(1)->defaultValue(User::STATUS_ACTIVE),
+            'employee_id' => $this->integer(),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime(),
         ], $table_options);
 
         $this->createIndex('idx-user-id', '{{%user}}', 'id');
+
+        $this->addForeignKey(
+            'fk-user-employee_id',
+            '{{%user}}',
+            'employee_id',
+            '{{%employee}}',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
 
         $this->createTable('role', [
             'id' => $this->primaryKey(),

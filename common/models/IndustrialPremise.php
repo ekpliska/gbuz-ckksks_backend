@@ -54,7 +54,13 @@ class IndustrialPremise extends ActiveRecord
                 'message' => '{attribute} обязательно для заполнения',
             ],
             [['eqp_function_id', 'placement_type_id', 'document_type_id'], 'integer'],
-            [['date'], 'safe'],
+            [
+                ['date'],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [['date'], 'default', 'value' => null],
             [
                 'note',
                 'string',

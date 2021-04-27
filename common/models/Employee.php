@@ -66,7 +66,17 @@ class Employee extends ActiveRecord
                 'required',
                 'message' => '{attribute} обязательно для заполнения',
             ],
-            [['birth_date', 'date_preparation', 'employment_date'], 'safe'],
+            [
+                ['birth_date', 'date_preparation', 'employment_date', 'year_ending'],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [
+                ['birth_date', 'date_preparation', 'employment_date', 'year_ending'],
+                'default',
+                'value' => null,
+            ],
             [['document_type_id', 'post_id', 'is_main_place', 'is_part_time'], 'integer'],
             [['experience'], 'string'],
             [
@@ -105,7 +115,6 @@ class Employee extends ActiveRecord
                 'max' => 170,
                 'tooLong' => '{attribute} должен содержать не более 170 символов',
             ],
-            [['year_ending'], 'string', 'max' => 4],
             [['document_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::className(), 'targetAttribute' => ['document_type_id' => 'id']],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'id']],
         ];
@@ -170,7 +179,7 @@ class Employee extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Уникальный идентификатор',
             'lastname' => 'Фамилия',
             'firstname' => 'Имя',
             'middlename' => 'Отчество',

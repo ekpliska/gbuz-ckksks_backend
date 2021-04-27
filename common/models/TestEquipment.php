@@ -64,7 +64,27 @@ class TestEquipment extends ActiveRecord
                 'message' => '{attribute} обязательно для заполнения',
             ],
             [['eqp_function_id', 'test_group_id', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
-            [['validity_date_from', 'validity_date_to'], 'safe'],
+            [
+                [
+                    'validity_date_from',
+                    'validity_date_to',
+                    'commissioning_year',
+                    'year_issue',
+                ],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [
+                [
+                    'validity_date_from',
+                    'validity_date_to',
+                    'commissioning_year',
+                    'year_issue',
+                ],
+                'default',
+                'value' => null,
+            ],
             [['note'], 'string'],
             [
                 ['name', 'specifications'],
@@ -84,7 +104,6 @@ class TestEquipment extends ActiveRecord
                 'max' => 70,
                 'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
-            [['commissioning_year', 'year_issue'], 'string', 'max' => 4],
             [
                 ['attestation_document', 'manufacturer'],
                 'string',

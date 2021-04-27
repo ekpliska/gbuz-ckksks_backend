@@ -21,7 +21,8 @@ use yii\web\IdentityInterface;
  * @property string|null $created_at
  * @property string|null $updated_at
  *
- * @property UserRole[] $UserRoles
+ * @property UserRole[] $userRoles
+ * @property Employee $employee
  */
 
 class User extends ActiveRecord implements IdentityInterface
@@ -71,7 +72,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'tooLong' => 'Логин должен содержать не более 70 символов',
             ],
             [['password_hash', 'token', 'auth_key'], 'string', 'max' => 255],
-            [['status'], 'integer'],
+            [['status', 'employee_id'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             [
                 'status',
@@ -79,6 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'message' => 'Статус содержит неверный формат',
             ],
             [['created_at', 'updated_at', 'user_roles'], 'safe'],
+            [['employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['employee_id' => 'id']],
         ];
     }
 
@@ -90,6 +92,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserRoles()
     {
         return $this->hasMany(UserRole::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Employee]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployee()
+    {
+        return $this->hasOne(Employee::className(), ['id' => 'employee_id']);
     }
 
     /**
@@ -198,12 +210,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Уникальный идентификатор',
             'username' => 'Логин',
             'password_hash' => 'Пароль',
             'token' => 'Token',
             'auth_key' => 'Auth Key',
             'status' => 'Статус',
+            'employee_id' => 'Сотрудник',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
         ];
@@ -220,16 +233,15 @@ class User extends ActiveRecord implements IdentityInterface
                     return ArrayHelper::getColumn($role_names, 'sys_name');
                 },
                 'employee' => function() {
-                    return null;
+                    return $this->employee;
                 },
             ]
         );
 
-        unset(
-            $fields['password_hash'],
-            $fields['token'],
-            $fields['auth_key']
-        );
+        ArrayHelper::remove($fields, 'password_hash');
+        ArrayHelper::remove($fields, 'token');
+        ArrayHelper::remove($fields, 'auth_key');
+        ArrayHelper::remove($fields, 'employee_id');
 
         return $fields;
     }

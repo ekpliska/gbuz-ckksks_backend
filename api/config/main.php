@@ -60,18 +60,16 @@ return [
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'v1/user',
+                    'controller' => 'v1/auth',
                     'pluralize' => false,
                     'extraPatterns' => [
-                        'GET view/<id:\d+>' => 'view',
-                        'DELETE delete/<id:\d+>' => 'delete',
-                        'PUT update' => 'update',
-                        'POST create' => 'create',
+                        'POST /' => 'index',
                     ]
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
+                        'v1/user',
                         'v1/measuring-instrument',
                         'v1/test-equipment',
                         'v1/auxiliary-equipment',

@@ -89,7 +89,13 @@ class StandardSample extends ActiveRecord
                 'max' => 120,
                 'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
-            [['year_issue', 'shelf_life'], 'string', 'max' => 4],
+            [
+                ['year_issue', 'shelf_life'],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [['year_issue', 'shelf_life'], 'default', 'value' => null],
             [
                 'note',
                 'string',

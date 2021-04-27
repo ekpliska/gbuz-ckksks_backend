@@ -31,7 +31,7 @@ class m210412_164951_add__industrial_premise extends Migration
             'document_type_id' => $this->integer(),
             'series' => $this->string(30)->notNull(),
             'number' => $this->string(30)->notNull(),
-            'date' => $this->dateTime()->notNull(),
+            'date' => $this->date()->notNull(),
             'note' => $this->text(1000),
         ], $table_options);
 

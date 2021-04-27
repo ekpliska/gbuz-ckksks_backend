@@ -66,7 +66,27 @@ class MeasuringInstrument extends ActiveRecord
             ],
             [['eqp_function_id', 'annually', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
             [['accuracy_class', 'note'], 'string'],
-            [['validity_date_from', 'validity_date_to'], 'safe'],
+            [
+                [
+                    'validity_date_from',
+                    'validity_date_to',
+                    'commissioning_year',
+                    'year_issue',
+                ],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [
+                [
+                    'validity_date_from',
+                    'validity_date_to',
+                    'commissioning_year',
+                    'year_issue',
+                ],
+                'default',
+                'value' => null,
+            ],
             [
                 ['name', 'measuring_range'],
                 'string',
@@ -85,7 +105,6 @@ class MeasuringInstrument extends ActiveRecord
                 'max' => 70,
                 'tooLong' => 'Поле {$attribute} должен содержать не более 70 символов',
             ],
-            [['commissioning_year', 'year_issue'], 'string', 'max' => 4],
             [
                 'note',
                 'string',

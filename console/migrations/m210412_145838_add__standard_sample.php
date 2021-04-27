@@ -30,9 +30,9 @@ class m210412_145838_add__standard_sample extends Migration
             'additional_info' => $this->string(255),
             'manufacturer' => $this->string(120),
             'country' => $this->string(100),
-            'year_issue' => $this->string(4),
+            'year_issue' => $this->date(),
             'normative_document' => $this->string(120)->notNull(),
-            'shelf_life' => $this->string(7)->notNull(),
+            'shelf_life' => $this->date()->notNull(),
             'note' => $this->text(1000),
             'is_archive' => $this->tinyInteger(1)->defaultValue(0),
         ], $table_options);

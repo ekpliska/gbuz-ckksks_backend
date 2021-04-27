@@ -62,7 +62,17 @@ class AuxiliaryEquipment extends ActiveRecord
                 'max' => 70,
                 'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
-            [['commissioning_year', 'year_issue'], 'string', 'max' => 4],
+            [
+                ['commissioning_year', 'year_issue'],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [
+                ['commissioning_year', 'year_issue'],
+                'default',
+                'value' => null,
+            ],
             [
                 ['manufacturer'],
                 'string',
