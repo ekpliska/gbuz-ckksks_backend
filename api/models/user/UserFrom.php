@@ -3,6 +3,7 @@
 
 namespace api\models\user;
 
+use common\models\Employee;
 use Yii;
 use yii\db\BaseActiveRecord;
 use yii\base\Model;
@@ -18,6 +19,7 @@ class UserFrom extends Model
     public $password;
     public $created_at;
     public $updated_at;
+    public $employee_id;
     public $user_roles = [];
 
     public function behaviors()
@@ -37,7 +39,11 @@ class UserFrom extends Model
     public function rules()
     {
         return [
-            [['username', 'password'], 'required'],
+            [
+                ['username', 'password', 'employee_id'],
+                'required',
+                'message' => '{attribute} обязательно для заполнения',
+            ],
             [
                 ['username'],
                 'string',
@@ -52,8 +58,20 @@ class UserFrom extends Model
                 'tooLong' => 'Пароль должен содержать не более 8 символов',
                 'tooShort' => 'Пароль должен содержать не менее 6 символов',
             ],
+            ['employee_id', 'integer'],
+            ['employee_id', 'checkExistenceEmployee'],
             [['created_at', 'updated_at', 'user_roles'], 'safe'],
         ];
+    }
+
+    public function checkExistenceEmployee($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            $employee = Employee::findOne(['id' => (int) $this->employee_id]);
+            if (!$employee) {
+                $this->addError($attribute, "Сотрудник с уникальным идентификатором {$this->employee_id} не найден");
+            }
+        }
     }
 
     public function save()
@@ -89,16 +107,13 @@ class UserFrom extends Model
 
     }
 
-    public function update($user, $data)
-    {
-    }
-
     public function attributeLabels()
     {
         return [
             'username' => 'Логин',
             'password' => 'Пароль',
             'user_roles' => 'Роли',
+            'employee_id' => 'Сотрудник',
         ];
     }
 

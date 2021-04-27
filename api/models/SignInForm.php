@@ -14,7 +14,11 @@ class SignInForm extends Model
     public function rules()
     {
         return [
-            [['username', 'password'], 'required', 'message' => 'Поле обязательно для заполнения'],
+            [
+                ['username', 'password'],
+                'required',
+                'message' => '{attribute} обязательно для заполнения',
+            ],
             [['username', 'password'], 'trim'],
             [
                 ['password'],
@@ -30,7 +34,7 @@ class SignInForm extends Model
 
     public function validatePassword($attribute, $params)
     {
-        if ($this->hasErrors()) {
+        if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || $user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Неверный логин или пароль');

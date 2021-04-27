@@ -49,7 +49,13 @@ class UserController extends RestAuthController
 
     public function actionCreate()
     {
+
         $post_data = Yii::$app->request->bodyParams;
+
+        if (!ArrayHelper::keyExists('employee_id', $post_data)) {
+            return $this->error(400, 400, ['Для учетной записи не указан сотрудник лаборатории']);;
+        }
+
         $model = new UserFrom();
         $model->setAttributes($post_data);
 
@@ -58,12 +64,11 @@ class UserController extends RestAuthController
                 return $this->error(422, 422, $model->getErrorSummary($model->errors));
             }
             if (!$model->save()) {
-                return $this->error(409, 409, ['Ошибка создания записи']);;
+                return $this->error(409, 409, ['Ошибка создания записи']);
             }
         }
 
         return $this->success($model);
-
     }
 
     public function actionUpdate()
