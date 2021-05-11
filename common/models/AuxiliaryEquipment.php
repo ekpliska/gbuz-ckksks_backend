@@ -21,11 +21,11 @@ use yii\helpers\ArrayHelper;
  * @property string|null $country
  * @property string|null $year_issue
  * @property int|null $type_own_id
- * @property int|null $placement_id
+ * @property int|null $industrial_premise_id
  * @property string|null $note
  *
  * @property EquipmentFunction $function
- * @property Placement $placement
+ * @property IndustrialPremise $industrialPremise
  * @property TypeOwn $typeOwn
  */
 class AuxiliaryEquipment extends ActiveRecord
@@ -49,7 +49,7 @@ class AuxiliaryEquipment extends ActiveRecord
                 'required',
                 'message' => '{attribute} обязательно для заполнения',
             ],
-            [['eqp_function_id', 'type_own_id', 'placement_id'], 'integer'],
+            [['eqp_function_id', 'type_own_id', 'industrial_premise_id'], 'integer'],
             [
                 ['type', 'country'],
                 'string',
@@ -91,7 +91,7 @@ class AuxiliaryEquipment extends ActiveRecord
                 'message' => '{attribute} уже зарегистрирован в системе',
             ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
-            [['placement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Placement::className(), 'targetAttribute' => ['placement_id' => 'id']],
+            [['industrial_premise_id'], 'exist', 'skipOnError' => true, 'targetClass' => IndustrialPremise::className(), 'targetAttribute' => ['industrial_premise_id' => 'id']],
             [['type_own_id'], 'exist', 'skipOnError' => true, 'targetClass' => TypeOwn::className(), 'targetAttribute' => ['type_own_id' => 'id']],
         ];
     }
@@ -107,13 +107,13 @@ class AuxiliaryEquipment extends ActiveRecord
     }
 
     /**
-     * Gets query for [[Placement]].
+     * Gets query for [[IndustrialPremise]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlacement()
+    public function getIndustrialPremise()
     {
-        return $this->hasOne(Placement::className(), ['id' => 'placement_id']);
+        return $this->hasOne(IndustrialPremise::className(), ['id' => 'industrial_premise_id']);
     }
 
     /**
@@ -137,15 +137,15 @@ class AuxiliaryEquipment extends ActiveRecord
                 'type_own' => function() {
                     return $this->typeOwn;
                 },
-                'placement' => function() {
-                    return $this->placement;
+                'industrial_premise' => function() {
+                    return $this->industrialPremise;
                 },
             ]
         );
 
         ArrayHelper::remove($fields, 'eqp_function_id');
         ArrayHelper::remove($fields, 'type_own_id');
-        ArrayHelper::remove($fields, 'placement_id');
+        ArrayHelper::remove($fields, 'industrial_premise_id');
 
         return $fields;
     }
@@ -167,7 +167,7 @@ class AuxiliaryEquipment extends ActiveRecord
             'country' => 'Страна',
             'year_issue' => 'Год выпуска',
             'type_own_id' => 'Право собственности',
-            'placement_id' => 'Место установки или хранения',
+            'industrial_premise_id' => 'Место установки или хранения',
             'note' => 'Примечание',
         ];
     }

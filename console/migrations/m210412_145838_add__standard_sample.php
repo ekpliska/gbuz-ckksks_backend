@@ -31,7 +31,12 @@ class m210412_145838_add__standard_sample extends Migration
             'manufacturer' => $this->string(120),
             'country' => $this->string(100),
             'year_issue' => $this->date(),
-            'normative_document' => $this->string(120)->notNull(),
+//            'normative_document' => $this->string(120)->notNull(),
+            'document_type_id' => $this->integer(),
+            'document_number' => $this->string(70)->notNull(),
+            'document_series' => $this->string(70)->notNull(),
+            'document_date_from' => $this->date(),
+            'document_date_to' => $this->date(),
             'shelf_life' => $this->date()->notNull(),
             'note' => $this->text(1000),
             'is_archive' => $this->tinyInteger(1)->defaultValue(0),
@@ -59,6 +64,16 @@ class m210412_145838_add__standard_sample extends Migration
             'CASCADE'
         );
 
+        $this->addForeignKey(
+            'fk-standard_sample-document_type_id',
+            '{{%standard_sample}}',
+            'document_type_id',
+            '{{%document_type}}',
+            'id',
+            'SET NULL',
+            'CASCADE'
+        );
+
     }
 
     /**
@@ -68,6 +83,7 @@ class m210412_145838_add__standard_sample extends Migration
     {
         $this->dropForeignKey('fk-standard_sample-eqp_function_id', '{{%standard_sample}}');
         $this->dropForeignKey('fk-standard_sample-sample_category_id', '{{%standard_sample}}');
+        $this->dropForeignKey('fk-standard_sample-document_type_id', '{{%document_type_id}}');
         $this->dropIndex('idx-standard_sample-id', '{{%standard_sample}}');
         $this->dropTable('{{%standard_sample}}');
     }

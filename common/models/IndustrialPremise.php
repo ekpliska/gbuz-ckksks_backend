@@ -17,11 +17,13 @@ use yii\helpers\ArrayHelper;
  * @property string|null $square
  * @property string|null $monitored_parameters
  * @property string|null $special_equipments
- * @property int|null $document_type_id
- * @property string|null $series
- * @property string|null $number
- * @property string|null $date
+ * @property int $document_type_id
+ * @property string $document_number
+ * @property string $document_series
+ * @property string $document_date_from
+ * @property string $document_date_to
  * @property string|null $note
+ * @property string|null $location
  *
  * @property DocumentType $documentType
  * @property EquipmentFunction $function
@@ -46,21 +48,23 @@ class IndustrialPremise extends ActiveRecord
             [
                 [
                     'name',
-                    'series',
-                    'number',
-                    'date',
+                    'document_type_id',
+                    'document_number',
+                    'document_series',
+                    'document_date_from',
+                    'document_date_to',
                 ],
                 'required',
                 'message' => '{attribute} обязательно для заполнения',
             ],
             [['eqp_function_id', 'placement_type_id', 'document_type_id'], 'integer'],
             [
-                ['date'],
+                ['document_date_from', 'document_date_to'],
                 'date',
                 'format' => 'php:Y-m-d',
                 'message' => '{attribute} неверный формат даты',
             ],
-            [['date'], 'default', 'value' => null],
+            [['document_date_from', 'document_date_to'], 'default', 'value' => null],
             [
                 'note',
                 'string',
@@ -71,7 +75,8 @@ class IndustrialPremise extends ActiveRecord
                 [
                     'name',
                     'monitored_parameters',
-                    'special_equipments'
+                    'special_equipments',
+                    'location',
                 ],
                 'string',
                 'max' => 255,
@@ -136,8 +141,15 @@ class IndustrialPremise extends ActiveRecord
                 'placement_type' => function() {
                     return $this->placementType;
                 },
-                'document_type' => function() {
-                    return $this->documentType;
+                'document_data' => function() {
+                    return [
+                        'document_name' => $this->documentType,
+                        'document_type_id' => $this->documentType,
+                        'document_number' => $this->document_number,
+                        'document_series' => $this->document_series,
+                        'document_date_from' => $this->document_date_from,
+                        'document_date_to' => $this->document_date_to,
+                    ];
                 },
             ]
         );
@@ -145,6 +157,10 @@ class IndustrialPremise extends ActiveRecord
         ArrayHelper::remove($fields, 'eqp_function_id');
         ArrayHelper::remove($fields, 'sample_category_id');
         ArrayHelper::remove($fields, 'document_type_id');
+        ArrayHelper::remove($fields, 'document_number');
+        ArrayHelper::remove($fields, 'document_series');
+        ArrayHelper::remove($fields, 'document_date_from');
+        ArrayHelper::remove($fields, 'document_date_to');
 
         return $fields;
     }
@@ -163,10 +179,12 @@ class IndustrialPremise extends ActiveRecord
             'monitored_parameters' => 'Перечень контролируемых параметров в помещении',
             'special_equipments' => 'Перечень специального оборудования в помещении',
             'document_type_id' => 'Нормативный документ',
-            'series' => 'Серия',
-            'number' => 'Номер',
-            'date' => 'Дата',
+            'document_number' => 'Номер нормативного документа',
+            'document_series' => 'Серия нормативного документа',
+            'document_date_from' => 'Срок действия документа (от)',
+            'document_date_to' => 'Срок действия документа (до)',
             'note' => 'Примечание',
+            'location' => 'Место нахождения или иная уникальная идентификация',
         ];
     }
 

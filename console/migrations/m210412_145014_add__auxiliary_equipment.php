@@ -30,7 +30,7 @@ class m210412_145014_add__auxiliary_equipment extends Migration
             'country' => $this->string(100),
             'year_issue' => $this->date(),
             'type_own_id' => $this->integer(),
-            'placement_id' => $this->integer(),
+            'industrial_premise_id' => $this->integer(),
             'note' => $this->text(1000),
         ], $table_options);
 
@@ -57,10 +57,10 @@ class m210412_145014_add__auxiliary_equipment extends Migration
         );
 
         $this->addForeignKey(
-            'fk-auxiliary_equipment-placement_id',
+            'fk-auxiliary_equipment-industrial_premise_id',
             '{{%auxiliary_equipment}}',
-            'placement_id',
-            '{{%placement}}',
+            'industrial_premise_id',
+            '{{%industrial_premise}}',
             'id',
             'SET NULL',
             'CASCADE'
@@ -74,8 +74,8 @@ class m210412_145014_add__auxiliary_equipment extends Migration
     public function safeDown()
     {
         $this->dropForeignKey('fk-auxiliary_equipment-eqp_function_id', '{{%auxiliary_equipment}}');
-        $this->dropForeignKey('fk-auxiliary_equipment-test_group_id', '{{%auxiliary_equipment}}');
         $this->dropForeignKey('fk-auxiliary_equipment-type_own_id', '{{%auxiliary_equipment}}');
+        $this->dropForeignKey('fk-auxiliary_equipment-industrial_premise_id', '{{%auxiliary_equipment}}');
         $this->dropIndex('idx-auxiliary_equipment-id', '{{%auxiliary_equipment}}');
         $this->dropTable('{{%auxiliary_equipment}}');
     }

@@ -13,27 +13,28 @@ use yii\helpers\ArrayHelper;
  * @property int $id
  * @property string $name
  * @property int|null $eqp_function_id
- * @property int|null $test_group_id
  * @property string|null $type
  * @property string|null $factory_number
  * @property string|null $commissioning_year
  * @property string|null $inventory_number
  * @property string|null $specifications
- * @property string $attestation_document
- * @property string $validity_date_from
- * @property string $validity_date_to
+ * @property int $document_type_id
+ * @property string $document_number
+ * @property string $document_series
+ * @property string $document_date_from
+ * @property string $document_date_to
  * @property int|null $status_verification
  * @property string|null $manufacturer
  * @property string|null $country
  * @property string|null $year_issue
  * @property int|null $type_own_id
- * @property int|null $placement_id
+ * @property int|null $industrial_premise_id
  * @property string|null $note
- *
  * @property EquipmentFunction $function
- * @property Placement $placement
- * @property TestGroup $testGroup
+ * @property IndustrialPremise $industrialPremise
  * @property TypeOwn $typeOwn
+ * @property DocumentType $documentType
+ * @property TestEquipmentGroup[] $testEquipmentGroup
  */
 class TestEquipment extends ActiveRecord
 {
@@ -54,20 +55,21 @@ class TestEquipment extends ActiveRecord
             [
                 [
                     'name',
-                    'attestation_document',
-                    'validity_date_from',
-                    'validity_date_to',
+                    'document_type_id',
+                    'document_series',
+                    'document_date_from',
+                    'document_date_to',
                     'factory_number',
                     'inventory_number',
                 ],
                 'required',
                 'message' => '{attribute} обязательно для заполнения',
             ],
-            [['eqp_function_id', 'test_group_id', 'status_verification', 'type_own_id', 'placement_id'], 'integer'],
+            [['eqp_function_id', 'status_verification', 'type_own_id', 'industrial_premise_id'], 'integer'],
             [
                 [
-                    'validity_date_from',
-                    'validity_date_to',
+                    'document_date_from',
+                    'document_date_to',
                     'commissioning_year',
                     'year_issue',
                 ],
@@ -77,8 +79,8 @@ class TestEquipment extends ActiveRecord
             ],
             [
                 [
-                    'validity_date_from',
-                    'validity_date_to',
+                    'document_date_from',
+                    'document_date_to',
                     'commissioning_year',
                     'year_issue',
                 ],
@@ -99,13 +101,13 @@ class TestEquipment extends ActiveRecord
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             [
-                ['factory_number', 'inventory_number'],
+                ['factory_number', 'inventory_number', 'document_number', 'document_series'],
                 'string',
                 'max' => 70,
                 'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
             [
-                ['attestation_document', 'manufacturer'],
+                ['manufacturer'],
                 'string',
                 'max' => 120,
                 'tooLong' => '{attribute} должен содержать не более 1000 символов',
@@ -122,9 +124,9 @@ class TestEquipment extends ActiveRecord
                 'message' => '{attribute} уже зарегистрирован в системе',
             ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
-            [['placement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Placement::className(), 'targetAttribute' => ['placement_id' => 'id']],
-            [['test_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TestGroup::className(), 'targetAttribute' => ['test_group_id' => 'id']],
+            [['industrial_premise_id'], 'exist', 'skipOnError' => true, 'targetClass' => IndustrialPremise::className(), 'targetAttribute' => ['industrial_premise_id' => 'id']],
             [['type_own_id'], 'exist', 'skipOnError' => true, 'targetClass' => TypeOwn::className(), 'targetAttribute' => ['type_own_id' => 'id']],
+            [['document_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::className(), 'targetAttribute' => ['document_type_id' => 'id']],
         ];
     }
 
@@ -139,23 +141,13 @@ class TestEquipment extends ActiveRecord
     }
 
     /**
-     * Gets query for [[Placement]].
+     * Gets query for [[IndustrialPremise]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlacement()
+    public function getIndustrialPremise()
     {
-        return $this->hasOne(Placement::className(), ['id' => 'placement_id']);
-    }
-
-    /**
-     * Gets query for [[TestGroup]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTestGroup()
-    {
-        return $this->hasOne(TestGroup::className(), ['id' => 'test_group_id']);
+        return $this->hasOne(IndustrialPremise::className(), ['id' => 'industrial_premise_id']);
     }
 
     /**
@@ -168,11 +160,31 @@ class TestEquipment extends ActiveRecord
         return $this->hasOne(TypeOwn::className(), ['id' => 'type_own_id']);
     }
 
+    /**
+     * Gets query for [[DocumentType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDocumentType()
+    {
+        return $this->hasOne(DocumentType::className(), ['id' => 'document_type_id']);
+    }
+
+    /**
+     * Gets query for [[TestEquipmentGroup]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTestEquipmentGroup()
+    {
+        return $this->hasMany(TestEquipmentGroup::className(), ['test_equipment_id' => 'id']);
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->validity_date_from = Yii::$app->formatter->asDate($this->validity_date_from, 'yyyy-MM-dd');
-            $this->validity_date_to = Yii::$app->formatter->asDate($this->validity_date_to, 'yyyy-MM-dd');
+            $this->document_date_from = Yii::$app->formatter->asDate($this->document_date_from, 'yyyy-MM-dd');
+            $this->document_date_to = Yii::$app->formatter->asDate($this->document_date_to, 'yyyy-MM-dd');
             return true;
         }
         return false;
@@ -186,22 +198,35 @@ class TestEquipment extends ActiveRecord
                 'function' => function() {
                     return $this->function;
                 },
-                'group' => function() {
-                    return $this->testGroup;
-                },
                 'type_own' => function() {
                     return $this->typeOwn;
                 },
-                'placement' => function() {
-                    return $this->placement;
+                'industrial_premise' => function() {
+                    return $this->industrialPremise;
+                },
+                'document_data' => function() {
+                    return [
+                        'document_name' => $this->documentType,
+                        'document_number' => $this->document_number,
+                        'document_series' => $this->document_series,
+                        'document_date_from' => $this->document_date_from,
+                        'document_date_to' => $this->document_date_to,
+                    ];
+                },
+                'groups' => function() {
+                    return $this->testEquipmentGroup;
                 },
             ]
         );
 
         ArrayHelper::remove($fields, 'eqp_function_id');
-        ArrayHelper::remove($fields, 'test_group_id');
         ArrayHelper::remove($fields, 'type_own_id');
-        ArrayHelper::remove($fields, 'placement_id');
+        ArrayHelper::remove($fields, 'industrial_premise_id');
+        ArrayHelper::remove($fields, 'document_type_id');
+        ArrayHelper::remove($fields, 'document_number');
+        ArrayHelper::remove($fields, 'document_series');
+        ArrayHelper::remove($fields, 'document_date_from');
+        ArrayHelper::remove($fields, 'document_date_to');
 
         return $fields;
     }
@@ -215,21 +240,22 @@ class TestEquipment extends ActiveRecord
             'id' => 'Уникальный идентификатор',
             'name' => 'Наименование испытательного оборудования',
             'eqp_function_id' => 'Назначение',
-            'test_group_id' => 'Наименование испытуемых групп объектов',
             'type' => 'Тип (марка)',
             'factory_number' => 'Заводской номер',
             'commissioning_year' => 'Год ввода в эксплуатацию',
             'inventory_number' => 'Инвентарный номер',
             'specifications' => 'Технические характеристики',
-            'attestation_document' => 'Документ об аттестации',
-            'validity_date_from' => 'Срок действия (от)',
-            'validity_date_to' => 'Срок действия (до)',
+            'document_type_id' => 'Нормативный документ',
+            'document_number' => 'Номер нормативного документа',
+            'document_series' => 'Серия нормативного документа',
+            'document_date_from' => 'Срок действия документа (от)',
+            'document_date_to' => 'Срок действия документа (до)',
             'status_verification' => 'Статус поверки',
             'manufacturer' => 'Производитель',
             'country' => 'Страна',
             'year_issue' => 'Год выпуска',
             'type_own_id' => 'Право собственности',
-            'placement_id' => 'Место установки или хранения',
+            'industrial_premise_id' => 'Место установки или хранения',
             'note' => 'Примечание',
         ];
     }

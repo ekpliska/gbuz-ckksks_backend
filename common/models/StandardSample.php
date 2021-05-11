@@ -22,13 +22,18 @@ use yii\helpers\ArrayHelper;
  * @property string|null $manufacturer
  * @property string|null $country
  * @property string|null $year_issue
- * @property string $normative_document
+ * @property int $document_type_id
+ * @property string $document_number
+ * @property string $document_series
+ * @property string $document_date_from
+ * @property string $document_date_to
  * @property string $shelf_life
  * @property string|null $note
  * @property int|null $is_archive
  *
  * @property EquipmentFunction $function
  * @property SampleCategory $sampleCategory
+ * @property DocumentType $documentType
  */
 class StandardSample extends ActiveRecord
 {
@@ -53,7 +58,10 @@ class StandardSample extends ActiveRecord
                     'number',
                     'certified_value',
                     'infelicity',
-                    'normative_document',
+                    'document_type_id',
+                    'document_series',
+                    'document_date_from',
+                    'document_date_to',
                     'shelf_life',
                 ],
                 'required',
@@ -78,15 +86,9 @@ class StandardSample extends ActiveRecord
                 'tooLong' => '{attribute} должен содержать не более 100 символов',
             ],
             [
-                ['number'],
+                ['number', 'document_number', 'document_series'],
                 'string',
                 'max' => 70,
-                'tooLong' => '{attribute} должен содержать не более 70 символов',
-            ],
-            [
-                ['manufacturer', 'normative_document'],
-                'string',
-                'max' => 120,
                 'tooLong' => '{attribute} должен содержать не более 70 символов',
             ],
             [
@@ -107,8 +109,20 @@ class StandardSample extends ActiveRecord
                 'unique',
                 'message' => '{attribute} уже зарегистрирован в системе',
             ],
+            [
+                ['document_date_from', 'document_date_to'],
+                'date',
+                'format' => 'php:Y-m-d',
+                'message' => '{attribute} неверный формат даты',
+            ],
+            [
+                ['document_date_from', 'document_date_to'],
+                'default',
+                'value' => null,
+            ],
             [['eqp_function_id'], 'exist', 'skipOnError' => true, 'targetClass' => EquipmentFunction::className(), 'targetAttribute' => ['eqp_function_id' => 'id']],
             [['sample_category_id'], 'exist', 'skipOnError' => true, 'targetClass' => SampleCategory::className(), 'targetAttribute' => ['sample_category_id' => 'id']],
+            [['document_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::className(), 'targetAttribute' => ['document_type_id' => 'id']],
         ];
     }
 
@@ -132,6 +146,16 @@ class StandardSample extends ActiveRecord
         return $this->hasOne(SampleCategory::className(), ['id' => 'sample_category_id']);
     }
 
+    /**
+     * Gets query for [[DocumentType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDocumentType()
+    {
+        return $this->hasOne(DocumentType::className(), ['id' => 'document_type_id']);
+    }
+
     public function fields()
     {
         $fields = ArrayHelper::merge(
@@ -143,11 +167,25 @@ class StandardSample extends ActiveRecord
                 'category' => function() {
                     return $this->sampleCategory;
                 },
+                'document_data' => function() {
+                    return [
+                        'document_name' => $this->documentType,
+                        'document_number' => $this->document_number,
+                        'document_series' => $this->document_series,
+                        'document_date_from' => $this->document_date_from,
+                        'document_date_to' => $this->document_date_to,
+                    ];
+                },
             ]
         );
 
         ArrayHelper::remove($fields, 'eqp_function_id');
         ArrayHelper::remove($fields, 'sample_category_id');
+        ArrayHelper::remove($fields, 'document_type_id');
+        ArrayHelper::remove($fields, 'document_number');
+        ArrayHelper::remove($fields, 'document_series');
+        ArrayHelper::remove($fields, 'document_date_from');
+        ArrayHelper::remove($fields, 'document_date_to');
 
         return $fields;
     }
@@ -170,7 +208,11 @@ class StandardSample extends ActiveRecord
             'manufacturer' => 'Производитель',
             'country' => 'Страна',
             'year_issue' => 'Дата выпуска экземпляра',
-            'normative_document' => 'Нормативные документ',
+            'document_type_id' => 'Нормативный документ',
+            'document_number' => 'Номер нормативного документа',
+            'document_series' => 'Серия нормативного документа',
+            'document_date_from' => 'Срок действия документа (от)',
+            'document_date_to' => 'Срок действия документа (до)',
             'shelf_life' => 'Срок годности',
             'note' => 'Примечание',
             'is_archive' => 'Архив',

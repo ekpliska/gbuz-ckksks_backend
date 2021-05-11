@@ -27,17 +27,19 @@ class m210412_133804_add__measuring_instrument extends Migration
             'commissioning_year' => $this->date(),
             'inventory_number' => $this->string(70)->notNull()->unique(),
             'measuring_range' => $this->string(255),
-            'accuracy_class' => $this->string(255255),
-            'verification_certificate' => $this->string(100)->notNull(),
-            'validity_date_from' => $this->date()->notNull(),
-            'validity_date_to' => $this->date()->notNull(),
+            'accuracy_class' => $this->string(255),
+            'document_type_id' => $this->integer(),
+            'document_number' => $this->string(70)->notNull(),
+            'document_series' => $this->string(70)->notNull(),
+            'document_date_from' => $this->date()->notNull(),
+            'document_date_to' => $this->date()->notNull(),
             'annually' => $this->tinyInteger(1)->defaultValue(0),
             'status_verification' => $this->tinyInteger(1)->defaultValue(0),
             'manufacturer' => $this->string(120),
             'country' => $this->string(100),
             'year_issue' => $this->date(),
             'type_own_id' => $this->integer(),
-            'placement_id' => $this->integer(),
+            'industrial_premise_id' => $this->integer(),
             'note' => $this->text(1000),
         ], $table_options);
 
@@ -64,10 +66,20 @@ class m210412_133804_add__measuring_instrument extends Migration
         );
 
         $this->addForeignKey(
-            'fk-measuring_instrument-placement_id',
+            'fk-measuring_instrument-industrial_premise_id',
             '{{%measuring_instrument}}',
-            'placement_id',
-            '{{%placement}}',
+            'industrial_premise_id',
+            '{{%industrial_premise}}',
+            'id',
+            'SET NULL',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'fk-measuring_instrument-document_type_id',
+            '{{%measuring_instrument}}',
+            'document_type_id',
+            '{{%document_type}}',
             'id',
             'SET NULL',
             'CASCADE'
@@ -80,9 +92,10 @@ class m210412_133804_add__measuring_instrument extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-measuring_instrument-placement_id', '{{%measuring_instrument}}');
+        $this->dropForeignKey('fk-measuring_instrument-industrial_premise_id', '{{%measuring_instrument}}');
         $this->dropForeignKey('fk-measuring_instrument-type_own_id', '{{%measuring_instrument}}');
         $this->dropForeignKey('fk-measuring_instrument-eqp_function_id', '{{%measuring_instrument}}');
+        $this->dropForeignKey('fk-measuring_instrument-document_type_id', '{{%measuring_instrument}}');
         $this->dropIndex('idx-measuring_instrument-id', '{{%measuring_instrument}}');
         $this->dropTable('{{%measuring_instrument}}');
     }

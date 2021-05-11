@@ -38,11 +38,6 @@ class m210409_104157_add__dictionaries extends Migration
             'CASCADE'
         );
 
-        $this->createTable('{{%placement}}', [
-            'id' => $this->primaryKey(),
-            'name' => $this->string(100)->notNull(),
-        ], $table_options);
-
         $this->createTable('{{%placement_type}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(100)->notNull(),
@@ -97,7 +92,6 @@ class m210409_104157_add__dictionaries extends Migration
     {
         $this->dropTable('{{%equipment_category}}');
         $this->dropTable('{{%equipment_function}}');
-        $this->dropTable('{{%placement}}');
         $this->dropForeignKey('fk-equipment_function-eqp_category_id', '{{%placement_type}}');
         $this->dropTable('{{%placement_type}}');
         $this->dropTable('{{%type_own}}');

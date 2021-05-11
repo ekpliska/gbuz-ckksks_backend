@@ -3,10 +3,10 @@
 use yii\db\Migration;
 
 /**
- * Class m210412_164951_add__industrial_premise
+ * Class m210412_133704_add__industrial_premise
  * Производственные помещения
  */
-class m210412_164951_add__industrial_premise extends Migration
+class m210412_133704_add__industrial_premise extends Migration
 {
     /**
      * {@inheritdoc}
@@ -29,10 +29,12 @@ class m210412_164951_add__industrial_premise extends Migration
             // TODO: подумать как хранить, массивом IDs или через промежуточную таблицу
             'special_equipments' => $this->string(255),
             'document_type_id' => $this->integer(),
-            'series' => $this->string(30)->notNull(),
-            'number' => $this->string(30)->notNull(),
-            'date' => $this->date()->notNull(),
+            'document_number' => $this->string(70)->notNull(),
+            'document_series' => $this->string(70)->notNull(),
+            'document_date_from' => $this->date()->notNull(),
+            'document_date_to' => $this->date()->notNull(),
             'note' => $this->text(1000),
+            'location' => $this->string(255),
         ], $table_options);
 
         $this->createIndex('idx-industrial_premise-id', '{{%industrial_premise}}', 'id');
