@@ -69,4 +69,16 @@ class TestEquipmentGroup extends ActiveRecord
         return $this->hasOne(TestGroup::className(), ['id' => 'test_group_id']);
     }
 
+    public function fields()
+    {
+        return [
+            'id' => function() {
+                return $this->testGroup->id;
+            },
+            'name' => function() {
+                return $this->testGroup->name;
+            },
+        ];
+    }
+
 }

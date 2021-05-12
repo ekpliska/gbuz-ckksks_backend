@@ -36,7 +36,7 @@ class SignInForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!$user || $user->validatePassword($this->password)) {
+            if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Неверный логин или пароль');
             }
         }
@@ -46,7 +46,6 @@ class SignInForm extends Model
     {
 
         $user = $this->getUser();
-
         if ($this->validate() && $user) {
             $user->generateToken();
             return $user->save() ? $user->token : false;

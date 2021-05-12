@@ -38,6 +38,9 @@ use yii\helpers\ArrayHelper;
  */
 class TestEquipment extends ActiveRecord
 {
+
+    public $groups;
+
     /**
      * {@inheritdoc}
      */
@@ -56,6 +59,7 @@ class TestEquipment extends ActiveRecord
                 [
                     'name',
                     'document_type_id',
+                    'document_number',
                     'document_series',
                     'document_date_from',
                     'document_date_to',
@@ -127,6 +131,8 @@ class TestEquipment extends ActiveRecord
             [['industrial_premise_id'], 'exist', 'skipOnError' => true, 'targetClass' => IndustrialPremise::className(), 'targetAttribute' => ['industrial_premise_id' => 'id']],
             [['type_own_id'], 'exist', 'skipOnError' => true, 'targetClass' => TypeOwn::className(), 'targetAttribute' => ['type_own_id' => 'id']],
             [['document_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentType::className(), 'targetAttribute' => ['document_type_id' => 'id']],
+
+            [['groups'], 'safe'],
         ];
     }
 
@@ -188,6 +194,27 @@ class TestEquipment extends ActiveRecord
             return true;
         }
         return false;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $_groups = TestGroup::find()->where(['IN', 'id', $this->groups])->all();
+        if (count($_groups)) {
+            $test_equipment_groups = $this->testEquipmentGroup;
+            if (count($test_equipment_groups)) {
+                foreach ($test_equipment_groups as $item) {
+                    $item->delete();
+                }
+            }
+            foreach ($_groups as $group_item) {
+                $group_model = new TestEquipmentGroup();
+                $group_model->test_equipment_id = $this->id;
+                $group_model->test_group_id = $group_item->id;
+                $group_model->save(false);
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
     }
 
     public function fields()
