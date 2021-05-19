@@ -24,7 +24,7 @@ trait JsonResponse
 
         $response = $this->asJson([
             'success' => false,
-            'message' => $message,
+            'errors' => $message,
         ]);
 
         $response->setStatusCode($status_code);

@@ -58,7 +58,7 @@ class RestAuthController extends Controller
         try {
             return parent::beforeAction($action);
         } catch (UnauthorizedHttpException $e) {
-            $this->error(401, 401, ['Отказ в доступе. Вы не являетесь авторизованным пользователем']);
+            $this->error(401, ['Отказ в доступе. Вы не являетесь авторизованным пользователем']);
         }
     }
 

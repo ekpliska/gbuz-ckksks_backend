@@ -77,6 +77,7 @@ return [
                         'v1/standard-sample',
                         'v1/IndustrialPremise',
                         'v1/employee',
+                        'v1/dictionary',
                     ],
                     'pluralize' => false,
                     'extraPatterns' => [

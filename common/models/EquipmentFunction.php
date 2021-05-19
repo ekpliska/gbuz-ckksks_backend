@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "equipment_function".
@@ -13,7 +14,7 @@ use yii\db\ActiveRecord;
  * @property string $name
  *
  * @property AuxiliaryEquipment[] $auxiliaryEquipments
- * @property EquipmentCategory $eqpCategory
+ * @property EquipmentCategory $category
  * @property IndustrialPremise[] $industrialPremises
  * @property MeasuringInstrument[] $measuringInstruments
  * @property StandardSample[] $standardSamples
@@ -69,7 +70,7 @@ class EquipmentFunction extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getEqpCategory()
+    public function getCategory()
     {
         return $this->hasOne(EquipmentCategory::className(), ['id' => 'eqp_category_id']);
     }
@@ -113,4 +114,21 @@ class EquipmentFunction extends ActiveRecord
     {
         return $this->hasMany(TestEquipment::className(), ['eqp_function_id' => 'id']);
     }
+
+    public function fields()
+    {
+        $fields = ArrayHelper::merge(
+            parent::fields(),
+            [
+                'category' => function() {
+                    return $this->category;
+                },
+            ]
+        );
+
+        ArrayHelper::remove($fields, 'eqp_category_id');
+
+        return $fields;
+    }
+
 }
