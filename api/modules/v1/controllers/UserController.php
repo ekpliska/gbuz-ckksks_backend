@@ -22,6 +22,7 @@ class UserController extends RestAuthController
             'update' => ['PUT'],
             'view' => ['GET'],
             'delete' => ['DELETE'],
+            'current' => ['GET'],
         ]
     )
     {
@@ -53,7 +54,7 @@ class UserController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('employee_id', $post_data)) {
-            return $this->error(400, 400, ['Для учетной записи не указан сотрудник лаборатории']);;
+            return $this->error(400, ['Для учетной записи не указан сотрудник лаборатории']);;
         }
 
         $model = new UserFrom();
@@ -61,10 +62,10 @@ class UserController extends RestAuthController
 
         if ($model->load($post_data, '')) {
             if (!$model->validate()) {
-                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+                return $this->error(422, $model->getErrorSummary($model->errors));
             }
             if (!$model->save()) {
-                return $this->error(409, 409, ['Ошибка создания записи']);
+                return $this->error(409, ['Ошибка создания записи']);
             }
         }
 
@@ -76,33 +77,33 @@ class UserController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $post_data['id']]);
 
         if (!$user) {
-            return $this->error(404, 404, ['Пользователь не найден']);
+            return $this->error(404, ['Пользователь не найден']);
         }
 
         if ($user->load($post_data, '') && $user->updateData($post_data)) {
             return $this->success($user);
         }
 
-        return $this->error(412, 412, $user->getErrorSummary($user->errors));
+        return $this->error(412, $user->getErrorSummary($user->errors));
 
     }
 
     public function actionView($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $id]);
 
         if (!$user) {
-            return $this->error(404, 404, ['Пользователь не найден']);
+            return $this->error(404, ['Пользователь не найден']);
         }
 
         $this->success($user);
@@ -112,20 +113,26 @@ class UserController extends RestAuthController
     public function actionDelete($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $user = User::findOne(['id' => (int) $id]);
 
         if (!$user) {
-            return $this->error(404, 404, ['Пользователь не найден']);
+            return $this->error(404, ['Пользователь не найден']);
         }
 
         if ($user->delete()) {
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Внутренная ошибка сервера']);
+        return $this->error(500, ['Внутренная ошибка сервера']);
+    }
+
+    public function actionCurrent()
+    {
+        $user = $user = User::findOne(['id' => (int) Yii::$app->user->id]);
+        return $this->success($user);
     }
 
 }

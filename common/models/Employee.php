@@ -155,8 +155,12 @@ class Employee extends ActiveRecord
         $fields = ArrayHelper::merge(
             parent::fields(),
             [
-                'document_type' => function() {
-                    return $this->documentType;
+                'document_data' => function() {
+                    return [
+                        'document_name' => $this->documentType,
+                        'document_number' => $this->document_number,
+                        'document_date_from' => $this->date_preparation,
+                    ];
                 },
                 'post' => function() {
                     return $this->post;
@@ -191,7 +195,7 @@ class Employee extends ActiveRecord
             'university_name' => 'Учебное заведение',
             'year_ending' => 'Год окончания',
             'qualification' => 'Квалификация',
-            'diploma_details' => 'Реквизиты документа об орразовании',
+            'diploma_details' => 'Реквизиты документа об образовании',
             'document_type_id' => 'Нормативный документ',
             'document_number' => 'Номер нормативного документа',
             'date_preparation' => 'Дата составления',

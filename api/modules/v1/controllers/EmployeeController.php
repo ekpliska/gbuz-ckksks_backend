@@ -53,10 +53,10 @@ class EmployeeController extends RestAuthController
 
         if ($model->load($post_data, '')) {
             if (!$model->validate()) {
-                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+                return $this->error(422, $model->getErrorSummary($model->errors));
             }
             if (!$model->save()) {
-                return $this->error(409, 409, ['Ошибка создания записи']);;
+                return $this->error(409, ['Ошибка создания записи']);;
             }
         }
 
@@ -68,38 +68,38 @@ class EmployeeController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $employee = Employee::findOne(['id' => (int) $post_data['id']]);
 
         if (!$employee) {
-            return $this->error(404, 404, ['Сотрудник не найден']);
+            return $this->error(404, ['Сотрудник не найден']);
         }
 
         if ($employee->load($post_data, '')) {
             if (!$employee->validate()) {
-                return $this->error(422, 422, $employee->getErrorSummary($employee->errors));
+                return $this->error(422, $employee->getErrorSummary($employee->errors));
             }
             if (!$employee->save()) {
-                return $this->error(409, 409, ['Ошибка обновления записи']);
+                return $this->error(409, ['Ошибка обновления записи']);
             }
             return $this->success($employee);
         }
 
-        return $this->error(500, 500, ['Внутренная ошибка сервера']);
+        return $this->error(500, ['Внутренная ошибка сервера']);
     }
 
     public function actionView($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $employee = Employee::findOne(['id' => (int) $id]);
 
         if (!$employee) {
-            return $this->error(404, 404, ['Сотрудник не найден']);
+            return $this->error(404, ['Сотрудник не найден']);
         }
 
         return $this->success($employee);
@@ -109,20 +109,20 @@ class EmployeeController extends RestAuthController
     public function actionDelete($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $employee = Employee::findOne(['id' => (int) $id]);
 
         if (!$employee) {
-            return $this->error(404, 404, ['Сотрудник не найден']);
+            return $this->error(404, ['Сотрудник не найден']);
         }
 
         if ($employee->delete()) {
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Внутренная ошибка сервера']);
+        return $this->error(500, ['Внутренная ошибка сервера']);
     }
 
 }

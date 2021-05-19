@@ -48,7 +48,7 @@ class SignInForm extends Model
         $user = $this->getUser();
         if ($this->validate() && $user) {
             $user->generateToken();
-            return $user->save() ? $user->token : false;
+            return $user->save() ? $user : false;
         }
 
         return false;

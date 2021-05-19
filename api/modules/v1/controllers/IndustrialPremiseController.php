@@ -53,10 +53,10 @@ class IndustrialPremiseController extends RestAuthController
 
         if ($model->load($post_data, '')) {
             if (!$model->validate()) {
-                return $this->error(422, 422, $model->getErrorSummary($model->errors));
+                return $this->error(422, $model->getErrorSummary($model->errors));
             }
             if (!$model->save()) {
-                return $this->error(409, 409, ['Ошибка создания записи']);;
+                return $this->error(409, ['Ошибка создания записи']);;
             }
         }
 
@@ -68,38 +68,38 @@ class IndustrialPremiseController extends RestAuthController
         $post_data = Yii::$app->request->bodyParams;
 
         if (!ArrayHelper::keyExists('id', $post_data) || $post_data['id'] === null) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $industrial_premise = IndustrialPremise::findOne(['id' => (int) $post_data['id']]);
 
         if (!$industrial_premise) {
-            return $this->error(404, 404, ['Производственное помещение не найдено']);
+            return $this->error(404, ['Производственное помещение не найдено']);
         }
 
         if ($industrial_premise->load($post_data, '')) {
             if (!$industrial_premise->validate()) {
-                return $this->error(422, 422, $industrial_premise->getErrorSummary($industrial_premise->errors));
+                return $this->error(422, $industrial_premise->getErrorSummary($industrial_premise->errors));
             }
             if (!$industrial_premise->save()) {
-                return $this->error(409, 409, ['Ошибка обновления записи']);
+                return $this->error(409, ['Ошибка обновления записи']);
             }
             return $this->success($industrial_premise);
         }
 
-        return $this->error(500, 500, ['Внутренная ошибка сервера']);
+        return $this->error(500, ['Внутренная ошибка сервера']);
     }
 
     public function actionView($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $industrial_premise = IndustrialPremise::findOne(['id' => (int) $id]);
 
         if (!$industrial_premise) {
-            return $this->error(404, 404, ['Производственное помещение не найдено']);
+            return $this->error(404, ['Производственное помещение не найдено']);
         }
 
         return $this->success($industrial_premise);
@@ -109,20 +109,20 @@ class IndustrialPremiseController extends RestAuthController
     public function actionDelete($id)
     {
         if (!$id) {
-            return $this->error(400, 400, ['Не передан уникальный идентификатор']);
+            return $this->error(400, ['Не передан уникальный идентификатор']);
         }
 
         $industrial_premise = IndustrialPremise::findOne(['id' => (int) $id]);
 
         if (!$industrial_premise) {
-            return $this->error(404, 404, ['Производственное помещение не найдено']);
+            return $this->error(404, ['Производственное помещение не найдено']);
         }
 
         if ($industrial_premise->delete()) {
             return $this->success();
         }
 
-        return $this->error(500, 500, ['Внутренная ошибка сервера']);
+        return $this->error(500, ['Внутренная ошибка сервера']);
     }
 
 }

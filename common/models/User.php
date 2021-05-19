@@ -177,7 +177,13 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function generateToken() {
-        $this->token = Yii::$app->security->generateRandomString();
+        $this->token = Yii::$app->security->generateRandomString(64);
+    }
+
+    public function refreshToken()
+    {
+        $this->token = Yii::$app->security->generateRandomString(64);
+        return $this->save() ? $this->token : false;
     }
 
     public function updateRoles($role_ids = [])
@@ -238,6 +244,7 @@ class User extends ActiveRecord implements IdentityInterface
             ]
         );
 
+        ArrayHelper::remove($fields, 'id');
         ArrayHelper::remove($fields, 'password_hash');
         ArrayHelper::remove($fields, 'token');
         ArrayHelper::remove($fields, 'auth_key');

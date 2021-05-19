@@ -51,7 +51,7 @@ return [
 //        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
             'rules' => [
                 [
@@ -64,6 +64,7 @@ return [
                     'pluralize' => false,
                     'extraPatterns' => [
                         'POST /' => 'index',
+                        'GET token/<refresh_token:\w+>' => 'token',
                     ]
                 ],
                 [
